@@ -8,7 +8,7 @@ logger = log.init_logger()
 
 class MachineLearning:
     """ Class for machine learning service """
-    def __init__(self, input_shape=4, first_layer_units=32, second_layer_units=64, output_units=2):
+    def __init__(self, input_shape=3, first_layer_units=32, second_layer_units=64, output_units=2):
         logger.info(
             "Initializing Machine Learning model with input_shape=%d, first_layer_units=%d, second_layer_units=%d, output_units=%d",
             input_shape, first_layer_units, second_layer_units, output_units)
