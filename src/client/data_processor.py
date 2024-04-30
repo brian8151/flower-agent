@@ -37,13 +37,14 @@ class DataProcessor:
         logger.info(f"Sample data - X: {X[:5]}, Y: {Y[:5]}")
         return X, Y
 
-
     def process_results(self, predicted_data):
+        # Extracting results and correctness flags from predicted_data
         x = np.array([entry['result'] for entry in predicted_data]).reshape(-1, 1)
         is_correct_req = [entry['is_correct'] for entry in predicted_data]
 
+        # Process each entry to determine the label based on 'result' and 'is_correct'
         y = []
-        for result, correct in zip(x.flatten(), is_correct_req):
+        for result, correct in zip(x.flatten(), is_correct_req):  # Now correctly uses zip
             if correct == "Y":
                 y.append(0 if result > 73.0 else 1)
             else:
