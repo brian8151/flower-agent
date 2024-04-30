@@ -26,7 +26,7 @@ class DataProcessor:
         logger.info(f"Prepared data shapes - X: {X.shape}, Y: {Y.shape}")
         logger.info(f"Sample data - X: {X[:5]}, Y: {Y[:5]}")
         return X, Y
-    
+
 
     def process_results(self, predicted_data):
         x = np.array([entry['result'] for entry in predicted_data]).reshape(-1, 1)
