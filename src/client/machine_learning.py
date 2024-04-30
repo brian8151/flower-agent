@@ -8,7 +8,7 @@ logger = log.init_logger()
 
 class MachineLearning:
     """ Class for machine learning service """
-    def __init__(self, input_shape=4, first_layer_units=32, second_layer_units=64, output_units=2):
+    def __init__(self, input_shape=1, first_layer_units=32, second_layer_units=64, output_units=2):
         logger.info(
             "Initializing Machine Learning model with input_shape=%d, first_layer_units=%d, second_layer_units=%d, output_units=%d",
             input_shape, first_layer_units, second_layer_units, output_units)
@@ -35,12 +35,6 @@ class MachineLearning:
             "Model compiled with optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy']")
         return model
 
-    # def build_model(self):
-    #     # Load model and data (MobileNetV2, CIFAR-10)
-    #     model = tf.keras.applications.MobileNetV2((32, 32, 3), classes=10, weights=None)
-    #     model.compile("adam", "sparse_categorical_crossentropy", metrics=["accuracy"])
-    #     return model
-
     def train_model(self, x, y, epochs=10, batch_size=32):
         """Train the model with the provided data."""
         logger.info("Starting training model with epochs=%d, batch_size=%d", epochs, batch_size)
@@ -57,3 +51,8 @@ class MachineLearning:
 
 
 
+    # def build_model(self):
+    #     # Load model and data (MobileNetV2, CIFAR-10)
+    #     model = tf.keras.applications.MobileNetV2((32, 32, 3), classes=10, weights=None)
+    #     model.compile("adam", "sparse_categorical_crossentropy", metrics=["accuracy"])
+    #     return model
