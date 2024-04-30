@@ -1,8 +1,8 @@
 import argparse
 import os
 # from src.client.flwr_client import create_client
-from src.client.onyx_flwr_client import create_client as onyx_create_client
-from src.client.flwr_client import create_client as flwr_create_client
+from src.client.onyx_flwr_client import create_client
+# from src.client.flwr_client import create_client as flwr_create_client
 import flwr as fl
 from src.util import log
 
@@ -26,8 +26,8 @@ def main():
     args = parse_args()
     try:
         logger.info("Onyx Federated Learning Agent starting ...")
-        onyx_client = onyx_create_client(args.node_id)
-        fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=onyx_client)
+        client = create_client(args.node_id)
+        fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=client)
         logger.info("Onyx Flower client setup completed")
 
     except Exception as e:
