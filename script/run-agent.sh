@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Configurationi
+NODE=$1
+# Configuration
 APP_DIR_BASE=/home/ec2-user/flwr-test
 APP_DIR=$APP_DIR_BASE/flower-agent
 LOG_PATH="/home/ec2-user/flwr-test"  # Ensure this directory exists
@@ -29,7 +30,7 @@ start_app() {
     install_deps
     cd $APP_DIR_BASE
     echo "Starting Flower agent application..."
-    nohup $PYTHON_BIN flower-agent > $LOG_PATH/flwr-agent.log 2>&1 &
+    nohup $PYTHON_BIN flower-agent --node-id $NODE > $LOG_PATH/flwr-agent-$NODE.log 2>&1 &
     echo "Flower agg started in the background, logs: $LOG_PATH/flwr-agent.log"
 }
 
