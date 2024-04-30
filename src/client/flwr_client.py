@@ -1,6 +1,7 @@
 import os
 import tensorflow as tf
 from flwr_datasets import FederatedDataset
+import flwr as fl
 
 # Function to create and return the Flower client
 def create_client(node_id):
