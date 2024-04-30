@@ -59,4 +59,6 @@ class DataProcessor:
     def get_fit_data(self):
         predicted_data = self.db_query.get_prediction_results()
         x, y = self.process_results(predicted_data)
+        logger.info(f"Processed fit data shapes - X: {x.shape}, Y: {y.shape}")
+        logger.info(f"Sample fit data - X: {x[:5]}, Y: {y[:5]}")
         return x, y
