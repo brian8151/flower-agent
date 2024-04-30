@@ -1,5 +1,4 @@
-from random import random
-
+import random
 
 class DataQuery:
     """ Class for Data Query service """
