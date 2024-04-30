@@ -4,7 +4,7 @@ import os
 from src.client.onyx_flwr_client import create_client
 # from src.client.flwr_client import create_client as flwr_create_client
 import flwr as fl
-from flwr.client import ClientApp
+from flwr.client import start_client
 from src.util import log
 
 logger = log.init_logger()
@@ -30,12 +30,11 @@ def main():
         # Create and start the Flower client
         logger.info(" Create and start the Flower client ...")
         client = create_client()
-        app = ClientApp(
-            client_fn=lambda: client.to_client(),
-            server_address="127.0.0.1:8080"  # Set the server address here
-        )
         logger.info("Onyx Federated Learning Agent starting ...")
-        app.start()
+        start_client(
+            server_address="127.0.0.1:8080",
+            client=client.to_client()
+        )
         logger.info("Onyx Flower client setup completed")
 
     except Exception as e:
