@@ -35,12 +35,14 @@ def create_client(node_id):
     # Define Flower client
     class CifarClient(fl.client.NumPyClient):
         def get_parameters(self, config):
-            logger.info("Fetching model parameters for training...")
+            weight = model.get_weights();
+            logger.info(f"Fetching model parameters for training, weights: {weight}")
             return model.get_weights()
 
         def fit(self, parameters, config):
             logger.info("Setting model parameters and starting fit process...")
             # model.set_weights(parameters)
+            machine_learning.train_model(x, y)
             model.fit(x, y, epochs=10, batch_size=32)  # Adjust epochs and batch_size as needed
             logger.info("Model training completed.")
             return model.get_weights(), len(x), {}
