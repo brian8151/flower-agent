@@ -32,15 +32,15 @@ def main():
 
     except Exception as e:
         logger.error("Failed to start the onyx flwr client: %s", str(e))
-    try:
-        logger.info("Flower Federated Learning Agent starting")
-        flwr_client = flwr_create_client(node_id=0)  # Example node_id
-        fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=flwr_client)
-        # Here, start the Flower server or further interaction
-        logger.info("Flower example client setup completed")
-
-    except Exception as e:
-        logger.error("Failed to start the flwr client: %s", str(e))
+    # try:
+    #     logger.info("Flower Federated Learning Agent starting")
+    #     flwr_client = flwr_create_client(node_id=0)  # Example node_id
+    #     fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=flwr_client)
+    #     # Here, start the Flower server or further interaction
+    #     logger.info("Flower example client setup completed")
+    #
+    # except Exception as e:
+    #     logger.error("Failed to start the flwr client: %s", str(e))
 
 if __name__ == "__main__":
     main()
