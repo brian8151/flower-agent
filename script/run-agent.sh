@@ -29,7 +29,7 @@ start_app() {
     install_deps
     cd $APP_DIR_BASE
     echo "Starting Flower agent application..."
-    nohup $PYTHON_BIN flower-aggregate > $LOG_PATH/flwr-agg.log 2>&1 &
+    nohup $PYTHON_BIN flower-agent > $LOG_PATH/flwr-agent.log 2>&1 &
     echo "Flower agg started in the background, logs: $LOG_PATH/flwr-agent.log"
 }
 
