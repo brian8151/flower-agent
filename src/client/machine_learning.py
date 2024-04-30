@@ -20,8 +20,8 @@ class MachineLearning:
         """Builds and compiles a Keras model based on provided specifications."""
         model = tf.keras.Sequential([
             tf.keras.layers.InputLayer(input_shape=(input_shape,)),
-            tf.keras.layers.Dense(first_layer_units, activation='relu'),
-            tf.keras.layers.Dense(second_layer_units, activation='relu'),
+            tf.keras.layers.Dense(first_layer_units, activation='tanh'),
+            tf.keras.layers.Dense(second_layer_units, activation='tanh'),
             tf.keras.layers.Dense(output_units, activation='softmax')
         ])
         model.compile(

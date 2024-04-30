@@ -25,7 +25,7 @@ def create_client(node_id):
             return model.get_weights()
 
         def fit(self, parameters, config):
-            model.set_weights(parameters)
+            # model.set_weights(parameters)
             machine_learning.train_model(x, y)
             return model.get_weights(), len(x), {}
 
