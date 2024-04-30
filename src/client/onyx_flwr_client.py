@@ -46,7 +46,7 @@ def create_client():
     payment_np_array = data_processor.fetch_and_prepare_payment_data();
     logger.info("Data preparation completed.")
     logger.info("Initializing machine learning model...")
-    machine_learning = MachineLearning(4, 32, 64, 2)
+    machine_learning = MachineLearning(1, 32, 64, 2)
     model = machine_learning.get_model()
     logger.info("Model initialized successfully.")
     # Prediction and result saving
