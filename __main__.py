@@ -1,6 +1,7 @@
 import argparse
 import os
-from src.client.flwr_client import create_client
+# from src.client.flwr_client import create_client
+from src.client.onyx_flwr_client import create_client
 import flwr as fl
 
 
