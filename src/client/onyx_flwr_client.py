@@ -10,7 +10,7 @@ def create_client(node_id):
     # Load model and data (MobileNetV2, CIFAR-10)
     data_processor = DataProcessor()
     payment_np_array = data_processor.fetch_and_prepare_payment_data();
-    machine_learning = MachineLearning(8, 32, 64, 2)
+    machine_learning = MachineLearning(4, 32, 64, 2)
     model = machine_learning.get_model()
     y_hat = machine_learning.predict(payment_np_array)
     data_processor.save_prediction_results(y_hat)

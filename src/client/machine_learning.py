@@ -9,7 +9,7 @@ from src.client.data_query import DataQuery
 
 class MachineLearning:
     """ Class for machine learning service """
-    def __init__(self, input_shape=8, first_layer_units=32, second_layer_units=64, output_units=2):
+    def __init__(self, input_shape=4, first_layer_units=32, second_layer_units=64, output_units=2):
         self.model = self.build_model(input_shape, first_layer_units, second_layer_units, output_units)
 
 
