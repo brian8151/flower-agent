@@ -46,11 +46,12 @@ def create_client():
     payment_np_array = data_processor.fetch_and_prepare_payment_data();
     logger.info("Data preparation completed.")
     logger.info("Initializing machine learning model...")
-    machine_learning = MachineLearning(1, 32, 64, 2)
+    machine_learning = MachineLearning(4, 32, 64, 2)
     model = machine_learning.get_model()
     logger.info("Model initialized successfully.")
     # Prediction and result saving
     logger.info("Making predictions on the prepared data...")
+    logger.info(f"Data shape before prediction: {payment_np_array.shape}")
     y_hat = machine_learning.predict(payment_np_array)
     logger.info("Predictions made successfully.")
     logger.info(f"Predictions: {y_hat}")

@@ -2,6 +2,8 @@ import numpy as np
 
 from src.client.data_query import DataQuery
 import pandas as pd
+from src.util import log
+logger = log.init_logger()
 
 class DataProcessor:
     """ Class for Data Processor service """
@@ -17,6 +19,7 @@ class DataProcessor:
         #for now
         data_raw = self.db_query.get_payment_data()
         data = self.prepare(data_raw)
+        logger.info(f"Prepared data shape: {data.shape} and sample data: {data[:5]}")  # Log the shape and a sample of the data
         return data
 
     def process_results(self, predicted_data):
