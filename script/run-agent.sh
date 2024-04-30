@@ -7,7 +7,7 @@ CMD=${2:-start}  # Default to 'start' if no second argument is given
 # Configuration
 APP_DIR_BASE="/home/ec2-user/flwr-test"
 APP_DIR="$APP_DIR_BASE/flower-agent"
-LOG_PATH="$APP_DIR_BASE/logs"  # Modified path for clarity and to ensure it exists
+LOG_PATH="$APP_DIR_BASE"  # Modified path for clarity and to ensure it exists
 PYTHON_BIN="/usr/local/bin/python3.9"
 
 cd $APP_DIR
