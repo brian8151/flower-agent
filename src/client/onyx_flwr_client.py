@@ -34,23 +34,28 @@ logger.info(f"Data for training fetched. X shape: {x.shape}, Y shape: {y.shape}"
 
 # Define Flower client
 class FlowerClient(fl.client.NumPyClient):
+    def __init__(self, data_processor, machine_learning):
+        self.data_processor = data_processor
+        self.machine_learning = machine_learning
+
     def get_parameters(self, config):
-        weight = model.get_weights();
-        logger.info(f"Fetching model parameters for training, weights: {weight}")
-        return model.get_weights()
+        weights = self.machine_learning.model.get_weights()
+        logger.info(f"Fetching model parameters for training, weights: {weights}")
+        return weights
 
     def fit(self, parameters, config):
-        logger.info("Setting model parameters and starting fit process...")
-        # model.set_weights(parameters)
-        machine_learning.train_model(x, y)
-        #model.fit(x, y, epochs=10, batch_size=32)  # Adjust epochs and batch_size as needed
+        x, y = self.data_processor.get_fit_data()
+        logger.info(f"Setting model parameters and starting fit process with data shapes X: {x.shape}, Y: {y.shape}")
+        self.machine_learning.model.set_weights(parameters)
+        self.machine_learning.train_model(x, y)
         logger.info("Model training completed.")
-        return model.get_weights(), len(x), {}
+        return self.machine_learning.model.get_weights(), len(x), {}
 
     def evaluate(self, parameters, config):
-        logger.info("Evaluating model...")
-        # model.set_weights(parameters)
-        loss, accuracy = model.evaluate(x, y)
+        x, y = self.data_processor.get_fit_data()
+        logger.info(f"Evaluating model with data shapes X: {x.shape}, Y: {y.shape}")
+        self.machine_learning.model.set_weights(parameters)
+        loss, accuracy = self.machine_learning.model.evaluate(x, y)
         logger.info(f"Evaluation completed. Loss: {loss}, Accuracy: {accuracy}")
         return loss, len(x), {"accuracy": accuracy}
 
@@ -58,4 +63,4 @@ class FlowerClient(fl.client.NumPyClient):
 
 
 def client_fn(cid):
-    return FlowerClient().to_client()
+    return FlowerClient(data_processor, machine_learning).to_client()
