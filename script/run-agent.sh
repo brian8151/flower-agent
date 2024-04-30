@@ -29,7 +29,8 @@ install_deps() {
 start_app() {
     install_deps
     echo "Starting Flower agent application..."
-    nohup $PYTHON_BIN -m flower_agent --node-id $NODE > $LOG_PATH/flwr-agent-$NODE.log 2>&1 &
+      cd $APP_DIR_BASE
+    nohup $PYTHON_BIN -m flower-agent --node-id $NODE > $LOG_PATH/flwr-agent-$NODE.log 2>&1 &
     echo "Flower agent started in the background, logs: $LOG_PATH/flwr-agent-$NODE.log"
 }
 
