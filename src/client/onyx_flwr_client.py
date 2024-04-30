@@ -30,7 +30,7 @@ def create_client(node_id):
             return model.get_weights(), len(x), {}
 
         def evaluate(self, parameters, config):
-            model.set_weights(parameters)
+            # model.set_weights(model.get_weights())
             loss, accuracy = model.evaluate(x, y)
             return loss, len(x), {"accuracy": accuracy}
 
