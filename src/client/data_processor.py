@@ -12,15 +12,21 @@ class DataProcessor:
 
     def prepare(self, data):
         d = pd.DataFrame(data)
-        d = d.to_numpy()
-        d = np.asarray(d).astype('float32')
-        return d
+        # Assuming the last column is the label
+        X = d.iloc[:, :-1]  # All columns except the last one
+        Y = d.iloc[:, -1]  # Only the last column
+        X = X.to_numpy().astype('float32')
+        Y = Y.to_numpy().astype('float32')
+        return X, Y
+
     def fetch_and_prepare_payment_data(self):
-        #for now
+        # Fetch the raw data
         data_raw = self.db_query.get_payment_data()
-        data = self.prepare(data_raw)
-        logger.info(f"Prepared data shape: {data.shape} and sample data: {data[:5]}")  # Log the shape and a sample of the data
-        return data
+        X, Y = self.prepare(data_raw)
+        logger.info(f"Prepared data shapes - X: {X.shape}, Y: {Y.shape}")
+        logger.info(f"Sample data - X: {X[:5]}, Y: {Y[:5]}")
+        return X, Y
+    
 
     def process_results(self, predicted_data):
         x = np.array([entry['result'] for entry in predicted_data]).reshape(-1, 1)
