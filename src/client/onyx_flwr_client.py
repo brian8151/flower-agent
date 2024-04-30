@@ -47,7 +47,7 @@ def create_client():
     logger.info(f"Data shape before prediction: X: {x.shape}, Y: {y.shape}")
     logger.info("Data preparation completed.")
     logger.info("Initializing machine learning model...")
-    machine_learning = MachineLearning(4, 32, 64, 2)
+    machine_learning = MachineLearning(3, 32, 64, 2)
     model = machine_learning.get_model()
     logger.info("Model initialized successfully.")
     # Prediction and result saving

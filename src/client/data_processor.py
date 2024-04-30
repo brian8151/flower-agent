@@ -10,11 +10,21 @@ class DataProcessor:
     def __init__(self):
         self.db_query = DataQuery()
 
+    # def prepare(self, data):
+    #     d = pd.DataFrame(data)
+    #     d = d.to_numpy()
+    #     d = np.asarray(d).astype('float32')
+    #     return d
+
+    # def prepare(self, data):
+    #     d = pd.DataFrame(data)
+    #     X = d.iloc[:, :4]  # All four columns as features if truly no labels are required
+    #     return X.to_numpy().astype('float32')
+
     def prepare(self, data):
         d = pd.DataFrame(data)
-        # Assuming the last column is the label
-        X = d.iloc[:, :-1]  # All columns except the last one
-        Y = d.iloc[:, -1]  # Only the last column
+        X = d.iloc[:, :3]  # First three columns as features
+        Y = d.iloc[:, 3]  # Fourth column as label
         X = X.to_numpy().astype('float32')
         Y = Y.to_numpy().astype('float32')
         return X, Y
