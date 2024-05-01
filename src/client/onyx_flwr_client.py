@@ -45,22 +45,22 @@ def create_client():
     data_processor = DataProcessor()
 
     # Fetch and prepare data for training
-    x, y = data_processor.get_fit_data()  # Directly fetching data for training
-    input_shape = x.shape[1]  # Dynamically determine the number of features in x
+    x, y = data_processor.get_fit_data()
     logger.info(f"Data for training fetched. X shape: {x.shape}, Y shape: {y.shape}")
 
+    if x.size == 0 or y.size == 0:
+        logger.error("Training data is empty. Check data source and preparation methods.")
+        return None  # Or handle this scenario appropriately
+
     # Initialize machine learning model based on the input shape of training data
+    input_shape = x.shape[1] if x.ndim > 1 else 0  # Safeguard against dimension issues
     machine_learning = MachineLearning(input_shape, 32, 64, 2)
     model = machine_learning.get_model()
     logger.info(f"Model for {input_shape} features initialized successfully.")
 
-    # Here, you could directly start the training process or handle it in the FlowerClient depending on your architecture
-    # Example of directly using the model to fit (normally, this would be handled by Flower client functions)
-    # model.fit(x, y, epochs=10, batch_size=32)
-    # logger.info("Model training completed successfully.")
-
-    # Returning the FlowerClient with the model and training data
     return FlowerClient(model, x, y)
+
+
 def create_client_1():
     logger.info("Initializing client creation process")
 
