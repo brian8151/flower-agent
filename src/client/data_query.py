@@ -41,3 +41,19 @@ class DataQuery:
                 (71476, 1179.14, 0.925,9),
                 (81007,-4762.40, 0.814, 2)
         ]
+
+    def get_prediction_sample_results(self):
+        # Mock data simulating what would normally be fetched from a database
+        # Here we assume each entry in the result set includes 'result' and 'is_correct'
+        return [
+            {'result': 85.0, 'is_correct': 'Y'},
+            {'result': 45.0, 'is_correct': 'N'},
+            {'result': 70.0, 'is_correct': 'Y'},
+            {'result': 90.0, 'is_correct': 'N'},
+            {'result': 60.0, 'is_correct': 'Y'},
+            {'result': 30.0, 'is_correct': 'N'},
+            {'result': 80.0, 'is_correct': 'Y'},
+            {'result': 50.0, 'is_correct': 'N'},
+            {'result': 95.0, 'is_correct': 'Y'},
+            {'result': 20.0, 'is_correct': 'N'},
+        ]
