@@ -37,28 +37,36 @@ class FlowerClient(fl.client.NumPyClient):
         return loss, len(self.x), {"accuracy": accuracy}
 
     logger.info("Flower client setup completed.")
+
+
 def create_client():
-    # Load model and data (MobileNetV2, CIFAR-10)
-    logger.info(f"Initializing client creation process")
-    # Load model and data (MobileNetV2, CIFAR-10)
-    logger.info("Starting data preparation...")
+    logger.info("Initializing client creation process")
+
     data_processor = DataProcessor()
-    x, y = data_processor.fetch_and_prepare_payment_data();
+
+    # Fetch and prepare payment data, and initialize model for this data
+    x, y = data_processor.fetch_and_prepare_payment_data()
+    input_shape = x.shape[1]  # Dynamically determine the number of features in x
     logger.info(f"Data shape before prediction: X: {x.shape}, Y: {y.shape}")
-    logger.info("Data preparation completed.")
-    logger.info("Initializing machine learning model...")
-    machine_learning = MachineLearning(3, 32, 64, 2)
+    machine_learning = MachineLearning(input_shape, 32, 64, 2)  # Initialize model based on input shape
     model = machine_learning.get_model()
+    logger.info(f"Model for {input_shape} features initialized successfully.")
+
     # Prediction and result saving
     y_hat = machine_learning.predict(x)
+    data_processor.save_prediction_results(y_hat)
     logger.info("Predictions made successfully.")
     logger.info(f"Predictions: {y_hat}")
 
-    data_processor.save_prediction_results(y_hat)
-    logger.info("Prediction results saved successfully.")
+    # Fetch and prepare data for training, and initialize model for this data
     x, y = data_processor.get_fit_data()
+    input_shape_fit = x.shape[1]  # Dynamically determine the number of features in x for training
     logger.info(f"Data for training fetched. X shape: {x.shape}, Y shape: {y.shape}")
-    machine_learning_1_feature = MachineLearning(1, 32, 64, 2)
-    model_1_feature = machine_learning_1_feature.get_model()
-    logger.info("Model for 1 feature initialized successfully.")
-    return FlowerClient(model_1_feature, x, y)
+    machine_learning_fit = MachineLearning(input_shape_fit, 32, 64,
+                                           2)  # Initialize model based on input shape for fit data
+    model_fit = machine_learning_fit.get_model()
+    logger.info(f"Model for {input_shape_fit} features initialized successfully for training.")
+
+    # Depending on your workflow, you might use 'model' or 'model_fit' with the corresponding 'x, y'
+    # Here I assume you continue with 'model_fit' for simplicity in the Flower client setup
+    return FlowerClient(model_fit, x, y)
