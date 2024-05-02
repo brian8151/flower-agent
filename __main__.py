@@ -3,6 +3,7 @@ import os
 
 from flwr.client import start_client
 from src.util import log
+logger = log.init_logger()
 
 from flwr.client import ClientApp, NumPyClient
 import tensorflow as tf
