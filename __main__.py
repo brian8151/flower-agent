@@ -22,7 +22,7 @@ def main():
     args, _ = parser.parse_known_args()
 
     # Setup TensorFlow and load data
-    model, x_train, y_train, x_test, y_test = setup_and_load_data(args.partition_id)
+    model, x_train, y_train, x_test, y_test = setup_and_load_data(args.partition_id, '/apps/data/payment.csv')
     # Create a Flower client instance
     flower_client = FlowerClient(model, x_train, y_train, x_test, y_test)
     def client_fn(cid: str):
