@@ -7,7 +7,7 @@ from src.util import log
 logger = log.init_logger()
 
 from flwr.client import ClientApp, NumPyClient
-from src.ml.flwr_machine_learning import FlwrMachineLearning
+from src.ml.flwr_machine_learning import setup_and_load_data
 
 
 def main():
@@ -31,10 +31,8 @@ def main():
     file_path = f'/apps/data/{args.csv_file_name}'
     print("Main File path:", file_path)
     # Instantiate FlwrMachineLearning class
-    flwr_ml = FlwrMachineLearning()
-
     # Setup TensorFlow and load data
-    model, x_train, y_train, x_test, y_test = flwr_ml.setup_and_load_data(args.partition_id, file_path)
+    model, x_train, y_train, x_test, y_test = setup_and_load_data(args.partition_id, file_path)
 
     # Create a Flower client instance
     flower_client = FlowerClient(model, x_train, y_train, x_test, y_test)

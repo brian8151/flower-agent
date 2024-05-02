@@ -10,32 +10,31 @@ from src.client.data_loader import DataLoader
 from src.util import log
 logger = log.init_logger()
 
-class FlwrMachineLearning:
 
-    def setup_and_load_data(partition_id, data_path, test_size=0.2, random_seed=42):
-        # Create an instance of DataLoader and load data
-        print("ML file:", data_path)
-        data_loader = DataLoader(str(data_path))
-        features, labels = data_loader.load_data()
+def setup_and_load_data(partition_id, data_path, test_size=0.2, random_seed=42):
+    # Create an instance of DataLoader and load data
+    print("ML file:", data_path)
+    data_loader = DataLoader(str(data_path))
+    features, labels = data_loader.load_data()
 
-        # Preprocessing: Scale continuous data and encode categorical data
-        column_trans = ColumnTransformer([
-            ('scale', StandardScaler(), ['transaction_amount']),
-            ('onehot', OneHotEncoder(), ['transaction_type', 'customer_type'])
-        ], remainder='passthrough')
+    # Preprocessing: Scale continuous data and encode categorical data
+    column_trans = ColumnTransformer([
+        ('scale', StandardScaler(), ['transaction_amount']),
+        ('onehot', OneHotEncoder(), ['transaction_type', 'customer_type'])
+    ], remainder='passthrough')
 
-        features = column_trans.fit_transform(features)
+    features = column_trans.fit_transform(features)
 
-        # Split the data into training and test sets
-        x_train, x_test, y_train, y_test = train_test_split(
-            features, labels, test_size=test_size, random_state=random_seed)
+    # Split the data into training and test sets
+    x_train, x_test, y_train, y_test = train_test_split(
+        features, labels, test_size=test_size, random_state=random_seed)
 
-        # Define a simple neural network model for binary classification
-        model = Sequential([
-            Dense(64, activation='relu', input_shape=(x_train.shape[1],)),
-            Dense(64, activation='relu'),
-            Dense(1, activation='sigmoid')
-        ])
-        model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    # Define a simple neural network model for binary classification
+    model = Sequential([
+        Dense(64, activation='relu', input_shape=(x_train.shape[1],)),
+        Dense(64, activation='relu'),
+        Dense(1, activation='sigmoid')
+    ])
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-        return model, x_train, y_train, x_test, y_test
+    return model, x_train, y_train, x_test, y_test
