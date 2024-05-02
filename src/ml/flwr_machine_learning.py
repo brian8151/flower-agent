@@ -13,7 +13,6 @@ logger = log.init_logger()
 
 def setup_and_load_data(partition_id, data_path, test_size=0.2, random_seed=42):
     # Create an instance of DataLoader and load data
-    print("ML file:", data_path)
     data_loader = DataLoader(str(data_path))
     features, labels = data_loader.load_data()
 

@@ -29,7 +29,7 @@ def main():
 
     # Construct the file path
     file_path = f'/apps/data/{args.csv_file_name}'
-    print("Main File path:", file_path)
+    print("File path:", file_path)
     # Instantiate FlwrMachineLearning class
     # Setup TensorFlow and load data
     model, x_train, y_train, x_test, y_test = setup_and_load_data(args.partition_id, file_path)
