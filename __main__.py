@@ -1,6 +1,8 @@
 import argparse
 import os
 
+from flwr.client import start_client
+
 from flwr.client import ClientApp, NumPyClient
 import tensorflow as tf
 from flwr_datasets import FederatedDataset
@@ -60,13 +62,23 @@ def client_fn(cid: str):
 app = ClientApp(
     client_fn=client_fn,
 )
+def main():
 
+    # args = parse_args()
+    try:
+        # Create and start the Flower client
+        logger.info(" Create and start the Flower client ...")
+        start_client(
+            server_address="127.0.0.1:8080",
+            client=FlowerClient().to_client(),
+        )
+        logger.info("Onyx Flower client setup completed")
+    except Exception as e:
+        logger.error("Failed to start the onyx flwr client: %s", str(e))
+
+
+if __name__ == "__main__":
+    main()
 
 # Legacy mode
 if __name__ == "__main__":
-    from flwr.client import start_client
-
-    start_client(
-        server_address="127.0.0.1:8080",
-        client=FlowerClient().to_client(),
-    )
