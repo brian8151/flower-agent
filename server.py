@@ -4,36 +4,24 @@ from flwr.server import ServerApp, ServerConfig
 from flwr.server.strategy import FedAvg
 from flwr.common import Metrics
 
-# Define metric aggregation function
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
-    # Multiply accuracy of each client by number of examples used
-    # Initialize lists to hold calculated accuracies and number of examples
-    accuracies = []
-    examples = []
+    try:
+        accuracies = [num_examples * m["accuracy"] for num_examples, m in metrics]
+        examples = [num_examples for num_examples, _ in metrics]
 
-    # Print header for detailed metrics
-    print("Detailed Client Metrics:")
-    print("Client | Examples | Accuracy")
+        print("Detailed Client Metrics:")
+        print("Client | Examples | Accuracy")
 
-    # Iterate through each client's metrics
-    for i, (num_examples, m) in enumerate(metrics):
-        client_accuracy = m["accuracy"]
-        accuracies.append(num_examples * client_accuracy)
-        examples.append(num_examples)
+        for i, (num_examples, m) in enumerate(metrics):
+            print(f"Client {i+1} | {num_examples} | {m['accuracy']:.4f}")
 
-        # Print each client's number of examples and accuracy
-        print(f"Client {i+1} | {num_examples} | {client_accuracy:.4f}")
-
-
-    # Calculate weighted average accuracy
-    weighted_avg_accuracy = sum(accuracies) / sum(examples)
-
-    # Print the weighted average accuracy
-    print(f"Weighted Average Accuracy: {weighted_avg_accuracy:.4f}")
-
-    # Return custom metric (weighted average)
-    return {"accuracy": weighted_avg_accuracy}
-
+        weighted_avg_accuracy = sum(accuracies) / sum(examples)
+        print(f"Weighted Average Accuracy: {weighted_avg_accuracy:.4f}")
+        return {"accuracy": weighted_avg_accuracy}
+    except Exception as e:
+        print(f"Error in weighted_average: {e}")
+        return {"accuracy": 0}  # Return a default or fallback value
+    
 # Define strategy
 strategy = FedAvg(evaluate_metrics_aggregation_fn=weighted_average)
 
