@@ -79,6 +79,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# Legacy mode
-if __name__ == "__main__":
