@@ -8,6 +8,8 @@ logger = log.init_logger()
 
 from flwr.client import ClientApp, NumPyClient
 from src.ml.flwr_machine_learning import FlwrMachineLearning
+
+
 def main():
     # Parse arguments to get partition ID and CSV file name
     parser = argparse.ArgumentParser(description="Flower Client Configuration")
@@ -27,13 +29,17 @@ def main():
 
     # Construct the file path
     file_path = f'/apps/data/{args.csv_file_name}'
+
+    # Instantiate FlwrMachineLearning class
     flwr_ml = FlwrMachineLearning()
+
     # Setup TensorFlow and load data
     model, x_train, y_train, x_test, y_test = flwr_ml.setup_and_load_data(args.partition_id, file_path)
 
     # Create a Flower client instance
     flower_client = FlowerClient(model, x_train, y_train, x_test, y_test)
 
+    # Assuming x_test or another set of new_data for predictions
     predictions = flower_client.predict(x_test)
     print("Predictions:", predictions)
 
@@ -51,6 +57,7 @@ def main():
         logger.info("Flower client setup completed")
     except Exception as e:
         logger.error(f"Failed to start the Flower client: {str(e)}")
+
 
 if __name__ == "__main__":
     main()
