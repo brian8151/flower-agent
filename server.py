@@ -21,12 +21,12 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     except Exception as e:
         print(f"Error in weighted_average: {e}")
         return {"accuracy": 0}  # Return a default or fallback value
-    
+
 # Define strategy
 strategy = FedAvg(evaluate_metrics_aggregation_fn=weighted_average)
 
 # Define config
-config = ServerConfig(num_rounds=3)
+config = ServerConfig(num_rounds=1)
 
 # Flower ServerApp
 app = ServerApp(
