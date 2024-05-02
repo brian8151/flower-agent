@@ -63,10 +63,10 @@ app = ClientApp(
 
 
 # Legacy mode
-if __name__ == "__main__":
-    from flwr.client import start_client
-
-    start_client(
-        server_address="127.0.0.1:8080",
-        client=FlowerClient().to_client(),
-    )
+# if __name__ == "__main__":
+#     from flwr.client import start_client
+#
+#     start_client(
+#         server_address="127.0.0.1:8080",
+#         client=FlowerClient().to_client(),
+#     )

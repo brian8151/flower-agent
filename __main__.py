@@ -26,6 +26,7 @@ def main():
 
     # Make TensorFlow log less verbose
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+    logger.info("Onyx Federated Learning Agent starting ...")
     # args = parse_args()
     # try:
     #
