@@ -1,9 +1,7 @@
-import os
-import tensorflow as tf
 import flwr as fl
 
 from src.client.data_processor import DataProcessor
-from src.client.machine_learning import MachineLearning
+from src.ml import MachineLearning
 from src.util import log
 
 logger = log.init_logger()
