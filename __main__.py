@@ -1,10 +1,10 @@
 import argparse
 import os
-# from src.client.flwr_client import create_client
-from src.client.onyx_flwr_client import create_client
-from src.client.flwr_client import create_client as flwr_create_client
-import flwr as fl
-from flwr.client import start_client
+# # from src.client.flwr_client import create_client
+# from src.client.onyx_flwr_client import create_client
+# from src.client.flwr_client import create_client as flwr_create_client
+# import flwr as fl
+# from flwr.client import start_client
 from src.util import log
 
 logger = log.init_logger()
@@ -19,6 +19,8 @@ logger = log.init_logger()
 #     )
 #     return parser.parse_args()
 
+from client import client_fn, FlowerClient  # Import necessary functions from client.py
+from flwr.client import start_client
 
 def main():
 
@@ -40,12 +42,16 @@ def main():
     # except Exception as e:
     #     logger.error("Failed to start the onyx flwr client: %s", str(e))
     try:
-        logger.info("Flower Federated Learning Agent starting")
-        flwr_client = flwr_create_client(node_id=0)  # Example node_id
-        fl.client.start_numpy_client(server_address="127.0.0.1:8080", client=flwr_client)
-        # Here, start the Flower server or further interaction
-        logger.info("Flower example client setup completed")
+        app = ClientApp(
+            client_fn=client_fn,
+        )
+        app.start()
 
+        # If you're using legacy mode
+        start_client(
+            server_address="127.0.0.1:8080",
+            client=FlowerClient().to_client(),
+        )
     except Exception as e:
         logger.error("Failed to start the flwr client: %s", str(e))
 
