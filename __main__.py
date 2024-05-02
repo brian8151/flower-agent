@@ -29,7 +29,7 @@ def main():
 
     # Construct the file path
     file_path = f'/apps/data/{args.csv_file_name}'
-
+    print("Main File path:", file_path)
     # Instantiate FlwrMachineLearning class
     flwr_ml = FlwrMachineLearning()
 
