@@ -34,6 +34,9 @@ def main():
     # Create a Flower client instance
     flower_client = FlowerClient(model, x_train, y_train, x_test, y_test)
 
+    predictions = flower_client.predict(x_test)
+    print("Predictions:", predictions)
+    
     def client_fn(cid: str):
         """Create and return an instance of Flower `Client`."""
         return flower_client.to_client()

@@ -21,3 +21,7 @@ class FlowerClient(NumPyClient):
         self.model.set_weights(parameters)
         loss, accuracy = self.model.evaluate(self.x_test, self.y_test)
         return loss, len(self.x_test), {"accuracy": accuracy}
+
+    def predict(self, new_data):
+        predictions = self.model.predict(new_data)
+        return predictions
