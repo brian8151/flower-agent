@@ -36,7 +36,7 @@ def main():
 
     predictions = flower_client.predict(x_test)
     print("Predictions:", predictions)
-    
+
     def client_fn(cid: str):
         """Create and return an instance of Flower `Client`."""
         return flower_client.to_client()
