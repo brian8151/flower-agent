@@ -2,7 +2,7 @@ import argparse
 
 from flwr.client import start_client
 
-from client import FlowerClient
+from src.client.flwr_client import FlowerClient
 from src.util import log
 logger = log.init_logger()
 
