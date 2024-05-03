@@ -1,6 +1,6 @@
-from typing import List, Dict, Tuple
 import flwr as fl
-from flwr.common.typing import Scalar, Config
+
+from typing import Dict, List, Optional, Tuple, Union
 from flwr.server.client_proxy import ClientProxy
 from flwr.common import (
     EvaluateIns,
@@ -18,6 +18,7 @@ from flwr.server.client_manager import ClientManager
 from flwr.server.strategy.fedavg import FedAvg
 from logging import INFO
 from flwr.common.logger import log
+import numpy as np
 
 class OnyxCustomStrategy(FedAvg):
 
@@ -46,3 +47,22 @@ class OnyxCustomStrategy(FedAvg):
             print(f"OnyxCustomStrategy [Server] Client ID: {client.cid}, Properties: {client_properties}")
 
         return evaluate_ins_list
+
+    def aggregate_fit(
+            self,
+            server_round: int,
+            results: List[Tuple[fl.server.client_proxy.ClientProxy, fl.common.FitRes]],
+            failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]],
+        ) -> Tuple[Optional[Parameters], Dict[str, Scalar]]:
+
+            # Call aggregate_fit from base class (FedAvg) to aggregate parameters and metrics
+            aggregated_parameters, aggregated_metrics = super().aggregate_fit(server_round, results, failures)
+
+            if aggregated_parameters is not None:
+                # Convert `Parameters` to `List[np.ndarray]`
+                aggregated_ndarrays: List[np.ndarray] = fl.common.parameters_to_ndarrays(aggregated_parameters)
+                log(INFO, "Saving round (%s) aggregated_ndarrays...", server_round)
+                # Save aggregated_ndarrays
+                np.savez(f"round-{server_round}-weights.npz", *aggregated_ndarrays)
+
+            return aggregated_parameters, aggregated_metrics
