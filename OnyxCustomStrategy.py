@@ -61,11 +61,9 @@ class OnyxCustomStrategy(FedAvg):
             if aggregated_parameters is not None:
                 # Convert `Parameters` to `List[np.ndarray]`
                 aggregated_ndarrays: List[np.ndarray] = fl.common.parameters_to_ndarrays(aggregated_parameters)
+                print("Aggregated parameters:")
+                print(aggregated_parameters)
                 log(INFO, " -------> Saving round (%s) aggregated_ndarrays... <-----", server_round)
                 # Save aggregated_ndarrays
                 np.savez(f"round-{server_round}-weights.npz", *aggregated_ndarrays)
-                # Print the size of aggregated_parameters
-                size_bytes = sys.getsizeof(aggregated_parameters)
-                size_human_readable = "{:.2f} MB".format(size_bytes / (1024 * 1024))  # Convert bytes to MB
-                print(f"Size of aggregated_parameters: {size_human_readable}")
             return aggregated_parameters, aggregated_metrics
