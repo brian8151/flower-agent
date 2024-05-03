@@ -27,6 +27,7 @@ strategy = FedAvg(evaluate_metrics_aggregation_fn=weighted_average)
 
 # Define config
 config = ServerConfig(num_rounds=1)
+from flwr.server import start_server
 # Proxy for start_server
 def start_server_proxy(*args, **kwargs):
     print("Intercepting start_server...")
