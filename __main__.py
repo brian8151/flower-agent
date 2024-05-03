@@ -41,12 +41,12 @@ def main():
     predictions = flower_client.predict(x_test)
     print("Predictions:", predictions)
 
-    def client_fn(cid: str):
-        """Create and return an instance of Flower `Client`."""
-        return flower_client.to_client()
-
-    # Flower ClientApp
-    app = ClientApp(client_fn=client_fn)
+    # def client_fn(cid: str):
+    #     """Create and return an instance of Flower `Client`."""
+    #     return flower_client.to_client()
+    #
+    # # Flower ClientApp
+    # app = ClientApp(client_fn=client_fn)
 
     # Start the Flower client
     try:
