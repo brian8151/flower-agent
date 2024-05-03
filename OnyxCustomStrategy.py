@@ -16,7 +16,9 @@ from flwr.common import (
 )
 from flwr.server.client_manager import ClientManager
 from flwr.server.strategy.fedavg import FedAvg
-from logging import INFO, basicConfig, getLogger
+from logging import INFO
+from flwr.common.logger import log
+
 class OnyxCustomStrategy(FedAvg):
 
 
@@ -27,9 +29,9 @@ class OnyxCustomStrategy(FedAvg):
         fit_ins_list = super().configure_fit(server_round, parameters, client_manager)
 
         for client, fit_ins in fit_ins_list:
-            client_properties = client.get_properties(Config({}))
-            print(f"[Server] Client ID: {client.cid}, Properties: {client_properties}")
-
+            client_properties = client.get_properties(dict())
+            #print(f"OnyxCustomStrategy [Server] Client ID: {client.cid}, Properties: {client_properties}")
+            log(INFO,"OnyxCustomStrategy Client ID (%s) Properties (%s).", client.cid,client_properties)
         return fit_ins_list
 
     def configure_evaluate(
@@ -41,6 +43,6 @@ class OnyxCustomStrategy(FedAvg):
         # Request properties from clients
         for client, evaluate_ins in evaluate_ins_list:
             client_properties = client.get_properties({"round": server_round})
-            print(f"[Server] Client ID: {client.cid}, Properties: {client_properties}")
+            print(f"OnyxCustomStrategy [Server] Client ID: {client.cid}, Properties: {client_properties}")
 
         return evaluate_ins_list
