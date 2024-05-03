@@ -6,7 +6,6 @@ from src.client.flwr_client import FlowerClient
 from src.util import log
 logger = log.init_logger()
 
-from flwr.client import ClientApp, NumPyClient
 from src.ml.flwr_machine_learning import setup_and_load_data
 
 
@@ -36,17 +35,10 @@ def main():
 
     # Create a Flower client instance
     flower_client = FlowerClient(model, x_train, y_train, x_test, y_test)
-
+    print(f"Client ID: {flower_client.client_id}")
     # Assuming x_test or another set of new_data for predictions
     predictions = flower_client.predict(x_test)
     print("Predictions:", predictions)
-
-    # def client_fn(cid: str):
-    #     """Create and return an instance of Flower `Client`."""
-    #     return flower_client.to_client()
-    #
-    # # Flower ClientApp
-    # app = ClientApp(client_fn=client_fn)
 
     # Start the Flower client
     try:
