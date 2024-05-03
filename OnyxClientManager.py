@@ -4,7 +4,7 @@ from flwr.server.criterion  import Criterion
 from flwr.server.client_manager  import ClientManager
 import threading
 from typing import Dict, List, Optional
-from logging import INFO
+from logging import INFO, basicConfig, getLogger
 import random
 class OnyxClientManager(ClientManager):
     """Provides a pool of available clients with custom logging."""
@@ -12,6 +12,8 @@ class OnyxClientManager(ClientManager):
     def __init__(self) -> None:
         self.clients: Dict[str, ClientProxy] = {}
         self._cv = threading.Condition()
+        self.logger = getLogger("OnyxClientManager")
+        basicConfig(level=INFO)
 
     def __len__(self) -> int:
         """Return the number of available clients.
@@ -32,7 +34,9 @@ class OnyxClientManager(ClientManager):
             The number of currently available clients.
         """
         num_clients = len(self)
-        log(INFO," number of available ONYX clients (%s).",num_clients)
+        self.logger.info(f"Number of available ONYX clients: {num_clients}")
+        for cid, client in self.clients.items():
+            self.logger.info(f"Client ID: {cid}, Client Info: {client}")
         return num_clients
 
     def wait_for(self, num_clients: int, timeout: int = 86400) -> bool:
