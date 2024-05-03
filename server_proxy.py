@@ -29,7 +29,7 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
 # Define strategy
 strategy = FedAvg(evaluate_metrics_aggregation_fn=weighted_average)
 clientManager = OnyxClientManager()
-server = OnyxFlowerServer()
+server = OnyxFlowerServer(clientManager, strategy)
 # Define config
 config = ServerConfig(num_rounds=1)
 # Proxy for start_server
