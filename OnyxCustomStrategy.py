@@ -19,10 +19,12 @@ from flwr.server.strategy.fedavg import FedAvg
 from logging import INFO, basicConfig, getLogger
 class OnyxCustomStrategy(FedAvg):
 
-    def configure_fit(self, rnd: int, parameters, client_manager: ClientManager) -> List[
-        Tuple[ClientProxy, FitIns]]:
+
+    def configure_fit(
+            self, server_round: int, parameters: Parameters, client_manager: ClientManager
+    ) -> List[Tuple[ClientProxy, FitIns]]:
         """Configure the next round of training."""
-        fit_ins_list = super().configure_fit(rnd, parameters, client_manager)
+        fit_ins_list = super().configure_fit(server_round, parameters, client_manager)
 
         for client, fit_ins in fit_ins_list:
             client_properties = client.get_properties(Config({}))
@@ -30,17 +32,15 @@ class OnyxCustomStrategy(FedAvg):
 
         return fit_ins_list
 
-
-    def configure_evaluate(self, rnd: int, parameters, client_manager: ClientManager) -> List[
-        Tuple[ClientProxy, EvaluateIns]]:
+    def configure_evaluate(
+            self, server_round: int, parameters: Parameters, client_manager: ClientManager
+    ) -> List[Tuple[ClientProxy, EvaluateIns]]:
         """Configure the next round of evaluation."""
-        evaluate_ins_list = super().configure_evaluate(rnd, parameters, client_manager)
+        evaluate_ins_list = super().configure_evaluate(server_round, parameters, client_manager)
 
         # Request properties from clients
         for client, evaluate_ins in evaluate_ins_list:
-            client_properties = client.get_properties({"round": rnd})
+            client_properties = client.get_properties({"round": server_round})
             print(f"[Server] Client ID: {client.cid}, Properties: {client_properties}")
-
-        return evaluate_ins_list
 
         return evaluate_ins_list
