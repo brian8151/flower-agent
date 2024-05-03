@@ -14,8 +14,10 @@ from flwr.common import (
     ndarrays_to_parameters,
     parameters_to_ndarrays,
 )
-class OnyxCustomStrategy(fl.server.strategy.FedAvg):
-    def configure_fit(self, rnd: int, parameters, client_manager: fl.server.client_manager.ClientManager) -> List[
+from flwr.server.client_manager import ClientManager
+from flwr.server.strategy.fedavg import FedAvg
+class OnyxCustomStrategy(FedAvg):
+    def configure_fit(self, rnd: int, parameters, client_manager: ClientManager) -> List[
         Tuple[ClientProxy, FitIns]]:
         """Configure the next round of training."""
         fit_ins_list = super().configure_fit(rnd, parameters, client_manager)
@@ -27,8 +29,8 @@ class OnyxCustomStrategy(fl.server.strategy.FedAvg):
 
         return fit_ins_list
 
-    def configure_evaluate(self, rnd: int, parameters, client_manager: fl.server.client_manager.ClientManager) -> List[
-        Tuple[fl.client.ClientProxy, fl.common.EvaluateIns]]:
+    def configure_evaluate(self, rnd: int, parameters, client_manager: ClientManager) -> List[
+        Tuple[ClientProxy, EvaluateIns]]:
         """Configure the next round of evaluation."""
         evaluate_ins_list = super().configure_evaluate(rnd, parameters, client_manager)
 
