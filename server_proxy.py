@@ -29,11 +29,17 @@ strategy = FedAvg(evaluate_metrics_aggregation_fn=weighted_average)
 config = ServerConfig(num_rounds=1)
 
 # Proxy for start_server
+# Proxy for start_server
 def start_server_proxy(*args, **kwargs):
     print("Intercepting start_server...")
     print("Received arguments:")
     print("args:", args)
-    print("kwargs:", kwargs)
+    print("kwargs:")
+    for key, value in kwargs.items():
+        if isinstance(value, FedAvg):
+            print(f"    {key}: <FedAvg object>")
+        else:
+            print(f"    {key}: {value}")
     # Add your custom logic here
     # You can modify args or kwargs as needed
     return start_server(*args, **kwargs)
