@@ -1,10 +1,22 @@
 from typing import List, Dict, Tuple
 import flwr as fl
 from flwr.common.typing import Scalar, Config
-
+from flwr.server.client_proxy import ClientProxy
+from flwr.common import (
+    EvaluateIns,
+    EvaluateRes,
+    FitIns,
+    FitRes,
+    MetricsAggregationFn,
+    NDArrays,
+    Parameters,
+    Scalar,
+    ndarrays_to_parameters,
+    parameters_to_ndarrays,
+)
 class OnyxCustomStrategy(fl.server.strategy.FedAvg):
     def configure_fit(self, rnd: int, parameters, client_manager: fl.server.client_manager.ClientManager) -> List[
-        Tuple[fl.client.ClientProxy, fl.common.FitIns]]:
+        Tuple[ClientProxy, FitIns]]:
         """Configure the next round of training."""
         fit_ins_list = super().configure_fit(rnd, parameters, client_manager)
 
