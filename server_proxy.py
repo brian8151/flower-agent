@@ -3,6 +3,9 @@ from typing import List, Tuple
 from flwr.server import ServerApp, ServerConfig
 from flwr.server.strategy import FedAvg
 from flwr.common import Metrics
+from flwr.server import start_server
+from OnyxClientManager import OnyxClientManager
+
 
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     try:
@@ -24,30 +27,12 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
 
 # Define strategy
 strategy = FedAvg(evaluate_metrics_aggregation_fn=weighted_average)
+clientManager = OnyxClientManager()
 
 # Define config
 config = ServerConfig(num_rounds=1)
-from flwr.server import start_server
 # Proxy for start_server
-def start_server_proxy(*args, **kwargs):
-    print("Intercepting start_server...")
-    print("Received arguments:")
-    print("args:", args)
-    print("kwargs:")
-    for key, value in kwargs.items():
-        if isinstance(value, FedAvg):
-            print(f"    {key}: <FedAvg object>")
-        else:
-            print(f"    {key}: {value}")
-    # Add your custom logic here
-    # You can modify args or kwargs as needed
-    return start_server_actual(*args, **kwargs)
 
-# Store the original start_server function
-start_server_actual = start_server
-
-# Replace import statement with proxy function
-start_server = start_server_proxy
 
 # Legacy mode
 if __name__ == "__main__":
@@ -55,4 +40,5 @@ if __name__ == "__main__":
         server_address="0.0.0.0:8080",
         config=config,
         strategy=strategy,
+        client_manager=clientManager
     )
