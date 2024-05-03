@@ -1,6 +1,11 @@
 from flwr.client import NumPyClient
 import tensorflow as tf
-
+from typing import Callable, Dict, Tuple
+from flwr.common import (
+    Config,
+    Context,
+    Scalar
+)
 class FlowerClient(NumPyClient):
     def __init__(self, cid, model, x_train, y_train, x_test, y_test):
         self.cid = cid
@@ -9,6 +14,19 @@ class FlowerClient(NumPyClient):
         self.y_train = y_train
         self.x_test = x_test
         self.y_test = y_test
+
+    def get_properties(self, config: Config) -> Dict[str, Scalar]:
+        print(f"[Client {self.cid}] get_properties")
+        # Define custom properties
+        properties = {
+            "cid": self.cid,
+            "model_type": type(self.model).__name__,
+            "num_train_samples": len(self.x_train),
+            "num_test_samples": len(self.x_test),
+            "custom_property": "client_custom_value",
+        }
+        # Return the properties to the server
+        return properties
 
     def get_parameters(self, config):
         print(f"[Client {self.cid}] get_parameters")
