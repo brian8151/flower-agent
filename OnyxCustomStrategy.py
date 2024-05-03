@@ -29,7 +29,7 @@ class OnyxCustomStrategy(FedAvg):
         fit_ins_list = super().configure_fit(server_round, parameters, client_manager)
 
         for client, fit_ins in fit_ins_list:
-            client_properties = client.get_properties(dict())
+            client_properties = client.properties
             #print(f"OnyxCustomStrategy [Server] Client ID: {client.cid}, Properties: {client_properties}")
             log(INFO,"OnyxCustomStrategy Client ID (%s) Properties (%s).", client.cid,client_properties)
         return fit_ins_list
@@ -42,7 +42,7 @@ class OnyxCustomStrategy(FedAvg):
 
         # Request properties from clients
         for client, evaluate_ins in evaluate_ins_list:
-            client_properties = client.get_properties({"round": server_round})
+            client_properties = client.properties
             print(f"OnyxCustomStrategy [Server] Client ID: {client.cid}, Properties: {client_properties}")
 
         return evaluate_ins_list
