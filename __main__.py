@@ -32,10 +32,12 @@ def main():
     # Instantiate FlwrMachineLearning class
     # Setup TensorFlow and load data
     model, x_train, y_train, x_test, y_test = setup_and_load_data(args.partition_id, file_path)
+    # Generate client ID
+    client_id = f"client_{args.partition_id}"
 
     # Create a Flower client instance
-    flower_client = FlowerClient(model, x_train, y_train, x_test, y_test)
-    print(f"Client ID: {flower_client.client_id}")
+    flower_client = FlowerClient(client_id, model, x_train, y_train, x_test, y_test)
+    print(f"Client ID: {flower_client.cid}")
     # Assuming x_test or another set of new_data for predictions
     predictions = flower_client.predict(x_test)
     print("Predictions:", predictions)
