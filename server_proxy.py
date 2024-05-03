@@ -27,8 +27,6 @@ strategy = FedAvg(evaluate_metrics_aggregation_fn=weighted_average)
 
 # Define config
 config = ServerConfig(num_rounds=1)
-
-# Proxy for start_server
 # Proxy for start_server
 def start_server_proxy(*args, **kwargs):
     print("Intercepting start_server...")
@@ -42,7 +40,10 @@ def start_server_proxy(*args, **kwargs):
             print(f"    {key}: {value}")
     # Add your custom logic here
     # You can modify args or kwargs as needed
-    return start_server(*args, **kwargs)
+    return start_server_actual(*args, **kwargs)
+
+# Store the original start_server function
+start_server_actual = start_server
 
 # Replace import statement with proxy function
 start_server = start_server_proxy
