@@ -1,10 +1,11 @@
 import logging
 from typing import Optional, Tuple, Dict
 
-from flwr.server.server import Server
+from flwr.server.server import Server, EvaluateResultsAndFailures, FitResultsAndFailures
+from flwr.server.history import History
 from flwr.server.client_manager import ClientManager
 from flwr.server.strategy import Strategy, FedAvg
-from flwr.common import Parameters, Scalar, EvaluateResultsAndFailures, FitResultsAndFailures, History
+from flwr.common import Parameters, Scalar
 
 
 class OnyxFlowerServer(Server):
