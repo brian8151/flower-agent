@@ -6,7 +6,8 @@ from flwr.server.history import History
 from flwr.server.client_manager import ClientManager
 from flwr.server.strategy import Strategy, FedAvg
 from flwr.common import Parameters, Scalar
-
+from logging import INFO
+from flwr.common.logger import log
 
 class OnyxFlowerServer(Server):
     """Custom Flower server with additional logging."""
@@ -17,15 +18,13 @@ class OnyxFlowerServer(Server):
         strategy: Optional[Strategy] = None,
     ) -> None:
         super().__init__(client_manager=client_manager, strategy=strategy)
-        self.logger = logging.getLogger("OnyxFlowerServer")
-        logging.basicConfig(level=logging.INFO)
-        self.logger.info("OnyxFlowerServer initialized")
+        log(INFO, "OnyxFlowerServer initialized.")
 
     def fit(self, num_rounds: int, timeout: Optional[float]) -> Tuple[History, float]:
         """Run federated learning for a number of rounds."""
-        self.logger.info(f"Starting fit for {num_rounds} rounds with timeout {timeout}")
+        log(INFO, "Starting fit for (%s) rounds with timeout %s", num_rounds, timeout)
         result = super().fit(num_rounds, timeout)
-        self.logger.info("Fit completed")
+        log(INFO, "Fit completed")
         return result
 
     def evaluate_round(
@@ -36,9 +35,9 @@ class OnyxFlowerServer(Server):
         Tuple[Optional[float], Dict[str, Scalar], EvaluateResultsAndFailures]
     ]:
         """Evaluate model."""
-        self.logger.info(f"Starting evaluation round {server_round} with timeout {timeout}")
+        log(INFO, "Starting evaluation for (%s) rounds with timeout %s", server_round, timeout)
         result = super().evaluate_round(server_round, timeout)
-        self.logger.info("Evaluation round completed")
+        log(INFO, "Evaluation round completed")
         return result
 
     def fit_round(
@@ -49,13 +48,12 @@ class OnyxFlowerServer(Server):
         Tuple[Optional[Parameters], Dict[str, Scalar], FitResultsAndFailures]
     ]:
         """Fit model for a single round."""
-        self.logger.info(f"Starting fit round {server_round} with timeout {timeout}")
+        log(INFO, "Starting fit round for (%s) rounds with timeout %s", server_round, timeout)
         result = super().fit_round(server_round, timeout)
-        self.logger.info("Fit round completed")
+        log(INFO, "Fit round completed")
         return result
 
     def disconnect_all_clients(self, timeout: Optional[float]) -> None:
         """Disconnect all clients."""
-        self.logger.info("Disconnecting all clients")
         super().disconnect_all_clients(timeout)
-        self.logger.info("All clients disconnected")
+        log(INFO, "All clients disconnected")
