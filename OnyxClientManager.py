@@ -1,5 +1,6 @@
 from flwr.common.logger import log
 from flwr.server.client_proxy  import ClientProxy
+from flwr.server.superlink.fleet.grpc_bidi.grpc_client_proxy import GrpcClientProxy
 from flwr.server.criterion  import Criterion
 from flwr.server.client_manager  import ClientManager
 import threading
@@ -29,8 +30,13 @@ class OnyxClientManager(ClientManager):
         num_clients = len(self)
         log(INFO, "Number of available ONYX clients: (%s).", num_clients)
         for cid, client in self.clients.items():
-            client_info = f"GrpcClientProxy - CID: {cid}, Node ID: {client.node_id}, Bridge Info: {client.bridge}"
-            log(INFO, "Client Info: %s", client_info)
+            if isinstance(client, GrpcClientProxy):
+                node_id = getattr(client, "node_id", None)  # Get node_id attribute or None if not found
+                bridge_info = getattr(client, "bridge", None)  # Get bridge attribute or None if not found
+                log(INFO, "Client Info: GrpcClientProxy - CID: %s, Node ID: %s, Bridge Info: %s", cid, node_id,
+                    bridge_info)
+            else:
+                log(INFO, "Client Info: ClientProxy - CID: %s", cid)
         return num_clients
     def num_available(self) -> int:
         """Return the number of available clients.
