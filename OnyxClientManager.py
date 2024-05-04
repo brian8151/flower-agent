@@ -38,19 +38,7 @@ class OnyxClientManager(ClientManager):
             else:
                 log(INFO, "Client Info: ClientProxy - CID: %s", cid)
         return num_clients
-    def num_available(self) -> int:
-        """Return the number of available clients.
 
-        Returns
-        -------
-        num_available : int
-            The number of currently available clients.
-        """
-        num_clients = len(self)
-        log(INFO, "Number of available ONYX clients: (%s).", num_clients)
-        for cid, client in self.clients.items():
-            log(INFO, "Client ID (%s), Client Info: (%s).", cid, client)
-        return num_clients
 
     def wait_for(self, num_clients: int, timeout: int = 86400) -> bool:
         """Wait until at least `num_clients` are available.
