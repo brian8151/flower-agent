@@ -25,6 +25,14 @@ class OnyxClientManager(ClientManager):
         return len(self.clients)
 
     def num_available(self) -> int:
+        """Return the number of available clients."""
+        num_clients = len(self)
+        log(INFO, "Number of available ONYX clients: (%s).", num_clients)
+        for cid, client in self.clients.items():
+            client_info = f"GrpcClientProxy - CID: {cid}, Node ID: {client.node_id}, Bridge Info: {client.bridge}"
+            log(INFO, "Client Info: %s", client_info)
+        return num_clients
+    def num_available(self) -> int:
         """Return the number of available clients.
 
         Returns
