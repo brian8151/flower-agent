@@ -5,6 +5,7 @@ from flwr.client import start_client
 from src.client.flwr_client import FlowerClient
 from src.util import log
 logger = log.init_logger()
+
 from src.ml.flwr_machine_learning import setup_and_load_data
 
 
