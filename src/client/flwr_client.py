@@ -33,9 +33,9 @@ class FlowerClient(NumPyClient):
         return self.model.get_weights()
 
     def fit(self, parameters, config):
-        print(f"[Client {self.cid}] fit, config: {config}")
-        server_client_id = config["server.client.cid"]
-        print(f"[server.client.cid -> {server_client_id}]")
+        # print(f"[Client {self.cid}] fit, config: {config}")
+        # server_client_id = config["server.client.cid"]
+        # print(f"[server.client.cid -> {server_client_id}]")
         self.model.set_weights(parameters)
         self.model.fit(self.x_train, self.y_train, epochs=1, batch_size=32)
         return self.model.get_weights(), len(self.x_train), {}
