@@ -164,6 +164,16 @@ def main():
     # Check if there are collected metrics and weights
     if metrics_collected and weights_collected:
         # Extract just the weights for further processing
+        # weights_only = [weights for _, weights in weights_collected]
+        for idx, (num_examples, weights) in enumerate(weights_collected):
+            print(f"Entry {idx}:")
+            print(f"  Num Examples: {num_examples}")
+            print(f"  Weights Type: {type(weights)}, Length: {len(weights)}")
+            if isinstance(weights, list):
+                for w in weights:
+                    print(f"    Weight Array Shape: {w.shape}")
+            else:
+                print("    Incorrect type or structure!")
         weights_only = [weights for _, weights in weights_collected]
         agg_parameters = ndarrays_to_parameters(weights_only)
         # Aggregate metrics
