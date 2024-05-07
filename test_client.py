@@ -69,7 +69,7 @@ def main():
     print("rerun model")
     model1, x_train1, y_train1, x_test1, y_test1 = setup_and_load_data(args.partition_id, file_path2)
     print("now run fit")
-    fit_weights, x_train_lenth = fit(parameters_from_db, model1, x_train1, y_train1, x_test1, y_test1)
+    fit_weights, x_train_lenth = fit(weights_from_db, model1, x_train1, y_train1, x_test1, y_test1)
     print("Fit Model weights:", fit_weights)
     print("send to agg with config protocol")
     # Serialize weights to send
