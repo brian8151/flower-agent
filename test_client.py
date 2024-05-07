@@ -126,8 +126,11 @@ def main():
         ]
         failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]] = []
         parameters_aggregated, metrics_aggregated =fedavg.aggregate_fit(1, results, failures)
-        print(f"parameters_aggregated {parameters_aggregated}")
-        print(f"metrics_aggregated {metrics_aggregated}")
+        if parameters_aggregated is not None:
+            # Convert `Parameters` to `List[np.ndarray]`
+            aggregated_ndarrays = parameters_to_ndarrays(parameters_aggregated)
+            print("save parameters_aggregated to db DB Model weights:", aggregated_ndarrays)
+            print(f"metrics_aggregated {metrics_aggregated}")
         print(f"weighted_average--------------------->")
         weighted_average(metrics_aggregated)
         # evaluate_result = fedavg.evaluate(1, agg_parameters)
