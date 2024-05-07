@@ -15,7 +15,7 @@ message_queue = []
 def fit(self, parameters, model, x_train, y_train, x_test, y_test):
     model.set_weights(parameters)
     model.fit(x_train, y_train, epochs=1, batch_size=32)
-    return model.get_weights(), len(self.x_train), {}
+    return model.get_weights(), len(x_train), {}
 
 def main():
     # Parse arguments to get partition ID and CSV file name
@@ -58,6 +58,7 @@ def main():
     print("Retrieve Model weights from db :")
     parameters_from_db = memory_db['model_weights']
     weights_from_db = parameters_to_ndarrays(parameters_from_db)
+    print("DB Model weights:", weights_from_db)
     # Set the weights back to your model
     model.set_weights(weights_from_db)
     print("After feedback, we get new data set")
@@ -66,9 +67,9 @@ def main():
     # Instantiate FlwrMachineLearning class
     # Setup TensorFlow and load data
     print("rerun model")
-    model, x_train, y_train, x_test, y_test = setup_and_load_data(args.partition_id, file_path2)
+    model1, x_train1, y_train1, x_test1, y_test1 = setup_and_load_data(args.partition_id, file_path2)
     print("now run fit")
-    fit_weights, x_train_lenth = fit(parameters, model, x_train, y_train, x_test, y_test)
+    fit_weights, x_train_lenth = fit(parameters, model1, x_train1, y_train1, x_test1, y_test1)
     print("Fit Model weights:", fit_weights)
     print("send to agg with config protocol")
     # Serialize weights to send
