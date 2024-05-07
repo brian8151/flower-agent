@@ -12,6 +12,7 @@ from src.common.parameter import ndarrays_to_parameters, parameters_to_ndarrays
 from src.protocol.simple_message import send_message, receive_message
 from flwr.common.typing import List, Tuple, Union
 from flwr.common import Metrics
+import tensorflow as tf
 from flwr.server.client_manager import SimpleClientManager
 # In-memory "database"
 memory_db = {}
@@ -20,6 +21,26 @@ def fit(parameters, model, x_train, y_train, x_test, y_test):
     model.set_weights(parameters)
     model.fit(x_train, y_train, epochs=1, batch_size=32)
     return model.get_weights(), len(x_train), {}
+
+def client_evaluate(parameters, model, x_test, y_test):
+    model.set_weights(parameters)
+    loss, accuracy = model.evaluate(x_test, y_test)
+    return loss, len(x_test), {"accuracy": accuracy}
+def evaluate_fn(server_round, parameters_ndarrays, extra_args):
+    # Assume 'model' and 'datasets' are defined and accessible
+    model.set_weights(parameters_ndarrays)
+    metrics_per_client = []
+
+    for client_id, data in enumerate(datasets):
+        validation_data_x, validation_data_y = data
+        loss, accuracy = model.evaluate(validation_data_x, validation_data_y)
+        num_examples = len(validation_data_x)  # Assuming this is how you determine the number of examples
+
+        # Collect metrics for each client
+        metrics_per_client.append((num_examples, {'accuracy': accuracy}))
+
+    return metrics_per_client
+
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     logger.info(" set up weighted_average")
     # Calculate weighted accuracies
@@ -40,6 +61,54 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
 
     # Aggregate and return custom metric (weighted average)
     return {"accuracy": weighted_avg_accuracy}
+
+
+def client_send_metrics_and_weights(model, weight, x_test, y_test, message_queue, client_id):
+    # Evaluate the model locally
+    loss, num_examples, metrics = client_evaluate(weight, model, x_test, y_test)
+    print(f"Loss: {loss}")
+    print(f"Number of Test Examples: {num_examples}")
+    print(f"Metrics: {metrics}")
+
+    # Serialize the model weights to send
+    ser_parameters = ndarrays_to_parameters(model.get_weights())
+
+    # Prepare and send the message containing weights and metrics
+    message = {
+        "client_id": client_id,
+        "parameters": ser_parameters,
+        "metrics": metrics,
+        "num_examples": num_examples
+    }
+    send_message(message_queue, message)
+    print("Metrics and weights sent to aggregator with config protocol.")
+def server_receive_metrics_and_weights(message_queue):
+    metrics_collected = []
+    weights_collected = []
+
+    # Loop to receive messages and process them
+    while True:  # Adjust this loop condition based on your actual server control logic
+        message = receive_message(message_queue)
+        if message is None:
+            break  # Exiting the loop when no more messages are available
+
+        # Extract data from the message
+        client_id = message['client_id']
+        received_parameters = message['parameters']
+        received_metrics = message['metrics']
+        num_examples = message['num_examples']
+
+        # Deserialize the parameters to model weights if needed
+        received_weights = parameters_to_ndarrays(received_parameters)
+
+        # Collect metrics and weights
+        metrics_collected.append((num_examples, received_metrics))
+        weights_collected.append((num_examples, received_weights))
+
+        print(f"Received from client {client_id}: Metrics: {received_metrics}, Number of Examples: {num_examples}")
+
+    # Return collected metrics and optionally weights
+    return client_id, num_examples, metrics_collected, weights_collected
 
 
 def main():
@@ -96,18 +165,25 @@ def main():
     print("now run fit")
     fit_weights, x_train_length, additional_info = fit(weights_from_db, model1, x_train1, y_train1, x_test1, y_test1)
     print("Fit Model weights:", fit_weights)
-    print("send to agg with config protocol")
+    loss, num_examples, metrics = client_evaluate(weights_from_db, model1, x_test1, y_test1);
+    # Print or use the results
+    print(f"Loss: {loss}")
+    print(f"Number of Test Examples: {num_examples}")
+    print(f"Metrics: {metrics}")
+    print("client send to agg with config protocol")
     # Serialize weights to send
     ser_parameters = ndarrays_to_parameters(fit_weights)
+    client_send_metrics_and_weights(model1, ser_parameters, x_test1, y_test1, message_queue, "BANK1")
     send_message(message_queue, {"client_id": "bank1", "parameters": ser_parameters})
+
     # Receive and process message
-    message = receive_message(message_queue)
-    print("received fit_weights on another side")
-    if message:
-        print("Received message on another side")
-        client_id = message['client_id']
-        received_parameters = message['parameters']
-        received_weights = parameters_to_ndarrays(received_parameters)
+    client_id, num_examples, metrics_collected, weights_collected = server_receive_metrics_and_weights(message_queue)
+    print(f"received fit_weights on another side - clientId: {client_id}, num_examples: {num_examples}")
+    if metrics_collected:
+        print("get merics and paramters")
+        aggregated_metrics = weighted_average(metrics_collected)
+        print("Aggregated Metrics:", aggregated_metrics)
+        received_weights = parameters_to_ndarrays(weights_collected)
         agg_parameters= ndarrays_to_parameters(received_weights)
         print(f"Received weights for client {client_id}: {received_weights}")
         fedavg = FedAvg()
@@ -119,8 +195,8 @@ def main():
                 FitRes(
                     status=Status(code=Code.OK, message="Success"),
                     parameters=agg_parameters,
-                    num_examples=1,
-                    metrics={},
+                    num_examples=num_examples,
+                    metrics=metrics_collected,
                 ),
             )
         ]
@@ -136,18 +212,8 @@ def main():
             print(f"metrics_aggregated {metrics_aggregated}")
         print(f"weighted_average--------------------->")
         weighted_average(metrics_aggregated)
-        # evaluate_result = fedavg.evaluate(1, agg_parameters)
-        # print(f"Evaluation Result: Loss = {evaluate_result.loss}, Metrics = {evaluate_result.metrics}")
-        # evaluate_res = EvaluateRes(
-        #     status=Status(code=Code.OK, message="Success"), loss=evaluate_result.loss, num_examples=1, metrics=evaluate_result.metrics
-        # )
-        weighted_average(metrics_aggregated)
-        # eval_results = []
-        # eval_results.append((client_proxy, evaluate_res))
-        # aggregated_result = fedavg.aggregate_evaluate(1, eval_results, [])
-        # aggregated_loss, aggregated_metrics = aggregated_result
-        # print(f"Aggregated Loss: {aggregated_loss}")
-        # print(f"Aggregated Metrics: {aggregated_metrics}")
+        print(f"-----done--------------------->")
+
 
 
 
