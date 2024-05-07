@@ -65,7 +65,7 @@ def client_send_metrics_and_weights(weight, loss, num_examples, metrics, message
         "num_examples": num_examples
     }
     send_message(message_queue, message)
-    print("Metrics and weights sent to aggregator with config protocol.")
+    print("########################### Metrics and weights sent to aggregator with config protocol. ###########################")
 def server_receive_metrics_and_weights(message_queue):
     metrics_collected = []
     weights_collected = []
@@ -89,7 +89,7 @@ def server_receive_metrics_and_weights(message_queue):
         metrics_collected.append((num_examples, received_metrics))
         weights_collected.append((num_examples, received_weights))
 
-        print(f"Received from client {client_id}: Metrics: {received_metrics}, Number of Examples: {num_examples}")
+        print(f"###########################  Received from client {client_id}: Metrics: {received_metrics}, Number of Examples: {num_examples} ###########################")
 
     # Return collected metrics and optionally weights
     return client_id, num_examples, metrics_collected, weights_collected
