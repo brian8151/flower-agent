@@ -125,7 +125,9 @@ def main():
             )
         ]
         failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]] = []
+        print(f"fedavg.aggregate_fit --------------------->")
         parameters_aggregated, metrics_aggregated =fedavg.aggregate_fit(1, results, failures)
+        print(f"check parameters_aggregated --------------------->")
         if parameters_aggregated is not None:
             # Convert `Parameters` to `List[np.ndarray]`
             aggregated_ndarrays = parameters_to_ndarrays(parameters_aggregated)
