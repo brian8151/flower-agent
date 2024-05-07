@@ -51,14 +51,12 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     return {"accuracy": weighted_avg_accuracy}
 
 
-def client_send_metrics_and_weights(model, weight, x_test, y_test, message_queue, client_id):
-    # Evaluate the model locally
-    loss, num_examples, metrics = client_evaluate(model, weight, x_test, y_test)
+def client_send_metrics_and_weights(weight, loss, num_examples, metrics, message_queue, client_id):
     print(f"Loss: {loss}")
     print(f"Number of Test Examples: {num_examples}")
     print(f"Metrics: {metrics}")
     # Serialize the model weights to send
-    ser_parameters = ndarrays_to_parameters(model.get_weights())
+    ser_parameters = ndarrays_to_parameters(weight)
     # Prepare and send the message containing weights and metrics
     message = {
         "client_id": client_id,
@@ -159,9 +157,7 @@ def main():
     print("client send to agg with config protocol")
     # Serialize weights to send
     ser_parameters = ndarrays_to_parameters(fit_weights)
-    client_send_metrics_and_weights(model1, ser_parameters, x_test1, y_test1, message_queue, "BANK1")
-    send_message(message_queue, {"client_id": "bank1", "parameters": ser_parameters})
-
+    client_send_metrics_and_weights(fit_weights, loss, num_examples, metrics, message_queue, "BANK1")
     # Receive and process message
     client_id, num_examples, metrics_collected, weights_collected = server_receive_metrics_and_weights(message_queue)
     print(f"received fit_weights on another side - clientId: {client_id}, num_examples: {num_examples}")
