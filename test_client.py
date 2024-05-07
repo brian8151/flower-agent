@@ -165,16 +165,12 @@ def main():
     if metrics_collected and weights_collected:
         # Extract just the weights for further processing
         # weights_only = [weights for _, weights in weights_collected]
-        for idx, (num_examples, weights) in enumerate(weights_collected):
-            print(f"Entry {idx}:")
-            print(f"  Num Examples: {num_examples}")
-            print(f"  Weights Type: {type(weights)}, Length: {len(weights)}")
-            if isinstance(weights, list):
-                for w in weights:
-                    print(f"    Weight Array Shape: {w.shape}")
-            else:
-                print("    Incorrect type or structure!")
-        weights_only = [weights for _, weights in weights_collected]
+        weights_only = [weight for _, weights in weights_collected for weight in weights]
+
+        # Check before serialization
+        print("Before serialization:")
+        for idx, weight in enumerate(weights_only):
+            print(f"Weight {idx} shape: {weight.shape}, dtype: {weight.dtype}")
         agg_parameters = ndarrays_to_parameters(weights_only)
         # Aggregate metrics
         aggregated_metrics = weighted_average(metrics_collected)
