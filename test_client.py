@@ -22,24 +22,12 @@ def fit(parameters, model, x_train, y_train, x_test, y_test):
     model.fit(x_train, y_train, epochs=1, batch_size=32)
     return model.get_weights(), len(x_train), {}
 
-def client_evaluate(parameters, model, x_test, y_test):
+def client_evaluate(model, parameters, x_test, y_test):
+    print(f"---- client_evaluate-----")
     model.set_weights(parameters)
     loss, accuracy = model.evaluate(x_test, y_test)
     return loss, len(x_test), {"accuracy": accuracy}
-def evaluate_fn(server_round, parameters_ndarrays, extra_args):
-    # Assume 'model' and 'datasets' are defined and accessible
-    model.set_weights(parameters_ndarrays)
-    metrics_per_client = []
 
-    for client_id, data in enumerate(datasets):
-        validation_data_x, validation_data_y = data
-        loss, accuracy = model.evaluate(validation_data_x, validation_data_y)
-        num_examples = len(validation_data_x)  # Assuming this is how you determine the number of examples
-
-        # Collect metrics for each client
-        metrics_per_client.append((num_examples, {'accuracy': accuracy}))
-
-    return metrics_per_client
 
 def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
     logger.info(" set up weighted_average")
@@ -65,14 +53,12 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
 
 def client_send_metrics_and_weights(model, weight, x_test, y_test, message_queue, client_id):
     # Evaluate the model locally
-    loss, num_examples, metrics = client_evaluate(weight, model, x_test, y_test)
+    loss, num_examples, metrics = client_evaluate(model, weight, x_test, y_test)
     print(f"Loss: {loss}")
     print(f"Number of Test Examples: {num_examples}")
     print(f"Metrics: {metrics}")
-
     # Serialize the model weights to send
     ser_parameters = ndarrays_to_parameters(model.get_weights())
-
     # Prepare and send the message containing weights and metrics
     message = {
         "client_id": client_id,
