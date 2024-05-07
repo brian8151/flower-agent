@@ -165,12 +165,10 @@ def main():
         print("get merics and paramters")
         aggregated_metrics = weighted_average(metrics_collected)
         print("Aggregated Metrics:", aggregated_metrics)
-        received_weights = parameters_to_ndarrays(weights_collected)
-        agg_parameters= ndarrays_to_parameters(received_weights)
-        print(f"Received weights for client {client_id}: {received_weights}")
+        agg_parameters= ndarrays_to_parameters(weights_collected)
+        print(f"Received weights for client {client_id}: {agg_parameters}")
         fedavg = FedAvg()
-        cid_expected = "1"
-        client_proxy = CustomClientProxy(cid=cid_expected)
+        client_proxy = CustomClientProxy(cid=client_id)
         results: List[Tuple[ClientProxy, FitRes]] = [
             (
                 client_proxy,
