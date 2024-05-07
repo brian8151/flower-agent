@@ -12,7 +12,7 @@ from src.common.type import List, Tuple, Union
 # In-memory "database"
 memory_db = {}
 message_queue = []
-def fit(self, parameters, model, x_train, y_train, x_test, y_test):
+def fit(parameters, model, x_train, y_train, x_test, y_test):
     model.set_weights(parameters)
     model.fit(x_train, y_train, epochs=1, batch_size=32)
     return model.get_weights(), len(x_train), {}
