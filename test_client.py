@@ -161,12 +161,16 @@ def main():
     # Receive and process message
     client_id, num_examples, metrics_collected, weights_collected = server_receive_metrics_and_weights(message_queue)
     print(f"received fit_weights on another side - clientId: {client_id}, num_examples: {num_examples}")
-    if metrics_collected:
-        print("get merics and paramters")
+    # Check if there are collected metrics and weights
+    if metrics_collected and weights_collected:
+        # Extract just the weights for further processing
+        weights_only = [weights for _, weights in weights_collected]
+        agg_parameters = ndarrays_to_parameters(weights_only)
+        # Aggregate metrics
         aggregated_metrics = weighted_average(metrics_collected)
         print("Aggregated Metrics:", aggregated_metrics)
-        agg_parameters= ndarrays_to_parameters(weights_collected)
-        print(f"Received weights for client {client_id}: {agg_parameters}")
+        # Assuming agg_parameters are now correctly processed
+        print(f"Aggregated Parameters: {agg_parameters}")
         fedavg = FedAvg()
         client_proxy = CustomClientProxy(cid=client_id)
         results: List[Tuple[ClientProxy, FitRes]] = [
@@ -182,7 +186,7 @@ def main():
         ]
         failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]] = []
         print(f"fedavg.aggregate_fit --------------------->")
-        parameters_aggregated, metrics_aggregated =fedavg.aggregate_fit(1, results, failures)
+        parameters_aggregated, metrics_aggregated = fedavg.aggregate_fit(1, results, failures)
         print(f"check parameters_aggregated --------------------->")
         if parameters_aggregated is not None:
             print(".......................saving parameters_aggregated.......................")
@@ -190,11 +194,8 @@ def main():
             aggregated_ndarrays = parameters_to_ndarrays(parameters_aggregated)
             print("saved parameters_aggregated to db DB Model weights:", aggregated_ndarrays)
             print(f"metrics_aggregated {metrics_aggregated}")
-        print(f"weighted_average--------------------->")
-        weighted_average(metrics_aggregated)
-        print(f"-----done--------------------->")
-
-
+    else:
+        print("No metrics or weights collected.")
 
 
 if __name__ == "__main__":
