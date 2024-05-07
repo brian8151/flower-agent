@@ -176,7 +176,6 @@ def main():
         aggregated_metrics = weighted_average(metrics_collected)
         print("Aggregated Metrics:", aggregated_metrics)
         # Assuming agg_parameters are now correctly processed
-        print(f"Aggregated Parameters: {agg_parameters}")
         fedavg = FedAvg()
         client_proxy = CustomClientProxy(cid=client_id)
         results: List[Tuple[ClientProxy, FitRes]] = [
