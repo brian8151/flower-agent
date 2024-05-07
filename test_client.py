@@ -40,6 +40,8 @@ def weighted_average(metrics: List[Tuple[int, Metrics]]) -> Metrics:
 
     # Aggregate and return custom metric (weighted average)
     return {"accuracy": weighted_avg_accuracy}
+
+
 def main():
     # Parse arguments to get partition ID and CSV file name
     parser = argparse.ArgumentParser(description="Flower Client Configuration")
@@ -120,33 +122,26 @@ def main():
                     num_examples=1,
                     metrics={},
                 ),
-            ),
-            # (
-            #     MagicMock(),
-            #     FitRes(
-            #         status=Status(code=Code.OK, message="Success"),
-            #         parameters=ndarrays_to_parameters([weights1_0, weights1_1]),
-            #         num_examples=5,
-            #         metrics={},
-            #     ),
-            # ),
+            )
         ]
         failures: List[Union[Tuple[ClientProxy, FitRes], BaseException]] = []
         parameters_aggregated, metrics_aggregated =fedavg.aggregate_fit(1, results, failures)
         print(f"parameters_aggregated {parameters_aggregated}")
         print(f"metrics_aggregated {metrics_aggregated}")
-
-        evaluate_result = fedavg.evaluate(1, agg_parameters)
-        print(f"Evaluation Result: Loss = {evaluate_result.loss}, Metrics = {evaluate_result.metrics}")
-        evaluate_res = EvaluateRes(
-            status=Status(code=Code.OK, message="Success"), loss=evaluate_result.loss, num_examples=1, metrics=evaluate_result.metrics
-        )
-        eval_results = []
-        eval_results.append((client_proxy, evaluate_res))
-        aggregated_result = fedavg.aggregate_evaluate(1, eval_results, [])
-        aggregated_loss, aggregated_metrics = aggregated_result
-        print(f"Aggregated Loss: {aggregated_loss}")
-        print(f"Aggregated Metrics: {aggregated_metrics}")
+        print(f"weighted_average--------------------->")
+        weighted_average(metrics_aggregated)
+        # evaluate_result = fedavg.evaluate(1, agg_parameters)
+        # print(f"Evaluation Result: Loss = {evaluate_result.loss}, Metrics = {evaluate_result.metrics}")
+        # evaluate_res = EvaluateRes(
+        #     status=Status(code=Code.OK, message="Success"), loss=evaluate_result.loss, num_examples=1, metrics=evaluate_result.metrics
+        # )
+        weighted_average(metrics_aggregated)
+        # eval_results = []
+        # eval_results.append((client_proxy, evaluate_res))
+        # aggregated_result = fedavg.aggregate_evaluate(1, eval_results, [])
+        # aggregated_loss, aggregated_metrics = aggregated_result
+        # print(f"Aggregated Loss: {aggregated_loss}")
+        # print(f"Aggregated Metrics: {aggregated_metrics}")
 
 
 
