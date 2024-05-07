@@ -129,9 +129,10 @@ def main():
         parameters_aggregated, metrics_aggregated =fedavg.aggregate_fit(1, results, failures)
         print(f"check parameters_aggregated --------------------->")
         if parameters_aggregated is not None:
+            print(".......................saving parameters_aggregated.......................")
             # Convert `Parameters` to `List[np.ndarray]`
             aggregated_ndarrays = parameters_to_ndarrays(parameters_aggregated)
-            print("save parameters_aggregated to db DB Model weights:", aggregated_ndarrays)
+            print("saved parameters_aggregated to db DB Model weights:", aggregated_ndarrays)
             print(f"metrics_aggregated {metrics_aggregated}")
         print(f"weighted_average--------------------->")
         weighted_average(metrics_aggregated)
