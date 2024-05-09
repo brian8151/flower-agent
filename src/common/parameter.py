@@ -54,9 +54,16 @@ def bytes_to_ndarray(tensor: bytes) -> NDArray:
     return cast(NDArray, ndarray_deserialized)
 
 # Function to convert NumPy arrays to serializable format (e.g., lists)
-def convert_arrays_to_serializable(parameters):
-    return [array.tolist() for array in parameters]
+# Function to convert Parameters object to serializable format
+def convert_parameters_to_serializable(parameters):
+    return {
+        "tensors": [array.tolist() for array in parameters.tensors],
+        "tensor_type": parameters.tensor_type
+    }
 
-# Function to convert serializable format back to NumPy arrays
-def convert_serializable_to_arrays(serializable_parameters):
-    return [np.array(serializable_array) for serializable_array in serializable_parameters]
+# Function to convert serializable format back to Parameters object
+def convert_serializable_to_parameters(serializable_parameters):
+    return Parameters(
+        tensors=[np.array(serializable_array) for serializable_array in serializable_parameters["tensors"]],
+        tensor_type=serializable_parameters["tensor_type"]
+    )
