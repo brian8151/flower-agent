@@ -23,7 +23,6 @@ async def process_fed_avg(message: MessageRequest):
     client_id = message.client_id
     # Log or process the received data
     logger.info("Received from client {0}: ".format(client_id))
-    flower_fed_avg_svc = FlowerFedAvgService()
     file_path = f'/apps/data/mock_payment_data-0.7.csv'
     print("File path:", file_path)
     # Instantiate FlwrMachineLearning class
