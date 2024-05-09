@@ -1,5 +1,5 @@
 from http.client import HTTPException
-
+import json
 from fastapi import APIRouter
 
 from src.common.parameter import ndarrays_to_parameters
@@ -86,13 +86,14 @@ async def process_fed_avg(message: ClientMessageRequest):
         logger.info("Loss: {0}, Number of Test Examples: {1}, Metrics: {2}".format(loss, num_examples, metrics))
         # Serialize the model weights to send
         ser_parameters = ndarrays_to_parameters(weights)
+        ser_parameters_json = json.dumps(ser_parameters)
         logger.info("covert ndarrays_to_parameters(weights)")
         # Prepare and send the message containing weights and metrics
         res=  ClientMessageResponseTest(
             message_id=message.message_id,
             client_id=message.client_id,
             strategy="fedavg",
-            parameters=ser_parameters,
+            parameters=ser_parameters_json,
             metrics=metrics,
             num_examples=num_examples,
             loss=loss,
