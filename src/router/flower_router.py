@@ -2,7 +2,7 @@ from http.client import HTTPException
 import json
 from fastapi import APIRouter
 
-from src.common.parameter import ndarrays_to_parameters, convert_parameters_to_serializable
+from src.common.parameter import ndarrays_to_parameters, serialize_parameters
 from src.model.client_message_req import ClientMessageRequest
 from src.model.client_message_res import ClientMessageResponse
 from src.model.client_message_res_test import ClientMessageResponseTest
@@ -86,7 +86,7 @@ async def process_fed_avg(message: ClientMessageRequest):
         logger.info("Loss: {0}, Number of Test Examples: {1}, Metrics: {2}".format(loss, num_examples, metrics))
         # Serialize the model weights to send
         parameters = ndarrays_to_parameters(weights)
-        ser_parameters = json.dumps(convert_parameters_to_serializable(parameters))
+        ser_parameters = serialize_parameters(parameters)
         logger.info("covert ndarrays_to_parameters(weights)")
         # Prepare and send the message containing weights and metrics
         res=  ClientMessageResponseTest(

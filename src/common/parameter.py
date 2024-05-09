@@ -14,7 +14,8 @@
 # ==============================================================================
 """Parameter conversion."""
 
-
+import json
+import base64
 from io import BytesIO
 from typing import cast
 
@@ -53,17 +54,18 @@ def bytes_to_ndarray(tensor: bytes) -> NDArray:
     ndarray_deserialized = np.load(bytes_io, allow_pickle=False)
     return cast(NDArray, ndarray_deserialized)
 
-# Function to convert NumPy arrays to serializable format (e.g., lists)
-# Function to convert Parameters object to serializable format
-def convert_parameters_to_serializable(parameters):
-    return {
-        "tensors": [array.tolist() for array in parameters.tensors],
+# Serialize Parameters object to JSON
+def serialize_parameters(parameters: Parameters) -> str:
+    # Convert bytes to base64-encoded strings
+    tensors = [base64.b64encode(tensor).decode('utf-8') for tensor in parameters.tensors]
+    return json.dumps({
+        "tensors": tensors,
         "tensor_type": parameters.tensor_type
-    }
+    })
 
-# Function to convert serializable format back to Parameters object
-def convert_serializable_to_parameters(serializable_parameters):
-    return Parameters(
-        tensors=[np.array(serializable_array) for serializable_array in serializable_parameters["tensors"]],
-        tensor_type=serializable_parameters["tensor_type"]
-    )
+# Deserialize JSON back to Parameters object
+def deserialize_parameters(json_str: str) -> Parameters:
+    data = json.loads(json_str)
+    # Convert base64-encoded strings back to bytes
+    tensors = [base64.b64decode(tensor.encode('utf-8')) for tensor in data['tensors']]
+    return Parameters(tensors=tensors, tensor_type=data['tensor_type'])
