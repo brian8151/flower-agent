@@ -55,7 +55,7 @@ async def process_fed_avg(message: ClientMessageRequest):
             loss=loss,
             properties={"additional_info": additional_info}
         )
-        logger.info("res: {0}".format(res))
+        # logger.info("res: {0}".format(res))
         return res
     except Exception as e:
         logger.error(f"Failed to process message: {str(e)}")
