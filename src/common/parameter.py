@@ -52,3 +52,11 @@ def bytes_to_ndarray(tensor: bytes) -> NDArray:
     # Source: https://numpy.org/doc/stable/reference/generated/numpy.load.html
     ndarray_deserialized = np.load(bytes_io, allow_pickle=False)
     return cast(NDArray, ndarray_deserialized)
+
+# Function to convert NumPy arrays to serializable format (e.g., lists)
+def convert_arrays_to_serializable(parameters):
+    return [array.tolist() for array in parameters]
+
+# Function to convert serializable format back to NumPy arrays
+def convert_serializable_to_arrays(serializable_parameters):
+    return [np.array(serializable_array) for serializable_array in serializable_parameters]
