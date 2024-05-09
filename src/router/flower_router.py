@@ -1,5 +1,4 @@
 from http.client import HTTPException
-import json
 from fastapi import APIRouter
 
 from src.common.parameter import ndarrays_to_parameters, serialize_parameters
