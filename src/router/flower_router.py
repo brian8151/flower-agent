@@ -3,7 +3,6 @@ from fastapi import APIRouter
 from src.common.parameter import ndarrays_to_parameters
 from src.model.client_message_res import ClientMessageResponse
 from src.model.message_req import MessageRequest
-from src.service.flower.flower_fedavg_service import FlowerFedAvgService
 flower_router = APIRouter()
 from src.util import log
 logger = log.init_logger()
