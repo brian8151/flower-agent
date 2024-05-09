@@ -20,6 +20,7 @@ class ClientMessageResponseTest(BaseModel):
     message_id: str = Field(..., description="Unique identifier for the message")
     client_id: str = Field(..., description="Identifier for the client sending the message")
     strategy: str = Field(..., description="Federated learning strategy")
+    parameters: Any = Field(..., description="Parameters for the model weight")
     metrics: Dict[str, float] = Field(..., description="Metrics reporting from client")
     num_examples: int = Field(..., description="Number of examples used in the client's dataset")
     loss: float = Field(..., description="The loss value from the model evaluation")
