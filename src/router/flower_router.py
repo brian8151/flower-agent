@@ -29,7 +29,7 @@ async def process_fed_avg(message: ClientMessageRequest):
     # Instantiate FlwrMachineLearning class
     # Setup TensorFlow and load data
     logger.info("rerun model")
-    model, x_train, y_train, x_test, y_test = setup_and_load_data(message.file_path)
+    model, x_train, y_train, x_test, y_test = setup_and_load_data(data_path)
     weights = model.get_weights()
     logger.info("Prediction Model weights: {0}".format(weights))
     logger.info("now run fit")
