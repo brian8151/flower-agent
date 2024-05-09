@@ -45,7 +45,7 @@ async def process_fed_avg(message: ClientMessageRequest):
         ser_parameters = ndarrays_to_parameters(weights)
         logger.info("covert ndarrays_to_parameters(weights)")
         # Prepare and send the message containing weights and metrics
-        return ClientMessageResponse(
+        res=  ClientMessageResponse(
             message_id=message.message_id,
             client_id=message.client_id,
             strategy="fedavg",
@@ -55,6 +55,8 @@ async def process_fed_avg(message: ClientMessageRequest):
             loss=loss,
             properties={"additional_info": additional_info}
         )
+        logger.info("res: {0}".format(res))
+        return res
     except Exception as e:
         logger.error(f"Failed to process message: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
