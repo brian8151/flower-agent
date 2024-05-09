@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
 from src.common.parameter import ndarrays_to_parameters
+from src.model.client_message_req import ClientMessageRequest
 from src.model.client_message_res import ClientMessageResponse
-from src.model.message_req import MessageRequest
 flower_router = APIRouter()
 from src.util import log
 logger = log.init_logger()
@@ -19,16 +19,16 @@ def client_evaluate(model, parameters, x_test, y_test):
     return loss, len(x_test), {"accuracy": accuracy}
 
 @flower_router.post("/send-fedavg")
-async def process_fed_avg(message: MessageRequest):
+async def process_fed_avg(message: ClientMessageRequest):
     client_id = message.client_id
     # Log or process the received data
     logger.info("Received from client {0}: ".format(client_id))
-    file_path = f'/apps/data/mock_payment_data-0.7.csv'
-    print("File path:", file_path)
+    # file_path = f'/apps/data/mock_payment_data-0.7.csv'
+    print("File path:", message.file_path)
     # Instantiate FlwrMachineLearning class
     # Setup TensorFlow and load data
     print("rerun model")
-    model, x_train, y_train, x_test, y_test = setup_and_load_data(file_path)
+    model, x_train, y_train, x_test, y_test = setup_and_load_data(message.file_path)
     weights = model.get_weights()
     print("Prediction Model weights:", weights)
     print("now run fit")
