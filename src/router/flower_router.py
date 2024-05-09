@@ -92,6 +92,7 @@ async def process_fed_avg(message: ClientMessageRequest):
             message_id=message.message_id,
             client_id=message.client_id,
             strategy="fedavg",
+            metrics=metrics,
             num_examples=num_examples,
             loss=loss,
             properties={"additional_info": additional_info}
