@@ -91,7 +91,10 @@ async def process_fed_avg(message: ClientMessageRequest):
         res=  ClientMessageResponseTest(
             message_id=message.message_id,
             client_id=message.client_id,
-            strategy="fedavg"
+            strategy="fedavg",
+            num_examples=num_examples,
+            loss=loss,
+            properties={"additional_info": additional_info}
         )
         # logger.info("res: {0}".format(res))
         return res

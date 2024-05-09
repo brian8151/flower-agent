@@ -20,7 +20,9 @@ class ClientMessageResponseTest(BaseModel):
     message_id: str = Field(..., description="Unique identifier for the message")
     client_id: str = Field(..., description="Identifier for the client sending the message")
     strategy: str = Field(..., description="Federated learning strategy")
-
+    num_examples: int = Field(..., description="Number of examples used in the client's dataset")
+    loss: float = Field(..., description="The loss value from the model evaluation")
+    properties: Dict[str, Any] = Field(..., description="Additional properties")
     class Config:
         schema_extra = {
             "example": {
