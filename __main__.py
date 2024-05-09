@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.router.flower_router import flower_router
 import logging
 def create_app():
+    logging.getLogger("uvicorn.error").setLevel(logging.INFO)
     app = FastAPI()
 
     @app.on_event("startup")
