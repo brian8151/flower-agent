@@ -23,6 +23,10 @@ class ModelRunner:
         model = build_model_from_config(config)
         return model
 
+    def get_model_weights(self, model_config):
+        model = build_model_from_config(model_config)
+        return model.get_weights()
+
     def run_mode_prediction(self, workflow_trace_id, domain_type, data, weights=None):
         logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
         model = self.build_model(domain_type)
