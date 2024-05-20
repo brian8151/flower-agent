@@ -5,7 +5,7 @@ from src.util import log
 logger = log.init_logger()
 
 
-class MachineLearning:
+class ModelRunner:
     """ Class for machine learning service """
 
     def __init__(self):
@@ -23,19 +23,21 @@ class MachineLearning:
         model = build_model_from_config(config)
         return model
 
-    def run_mode_prediction(self, data, domain_type, weights):
-        logger.info("Build model for domain {0}".format(domain_type))
+    def run_mode_prediction(self, workflow_trace_id, domain_type, data, weights=None):
+        logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
         model = self.build_model(domain_type)
+        logger.info("Model summary: {0}".format(model.summary()))
+
         if weights is None:
-            logger.info("Weight is empty, initial weight")
+            logger.info("Weight is empty, initializing weight")
             weights = model.get_weights()
 
         model.set_weights(weights)
-        y_hat = model.predict(data)
+        y_hat = model.predict([item.features for item in data])
         n = len(data)
-        logger.info("data size: {0}".format(n))
+        logger.info("Data size: {0}".format(n))
 
-        data_req = [{"data": data[i], "result": None} for i in range(n)]
+        data_req = [{"data": data[i].features, "result": None} for i in range(n)]
 
         for i in range(n):
             data_req[i]["result"] = float(100.0 * y_hat[i][0])  # acceptable percentage
