@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from src.router.flower_router import flower_router
+from src.router.agent_flower_router import flower_router
 import logging
 def create_app():
     logging.getLogger("uvicorn.error").setLevel(logging.INFO)
@@ -9,7 +9,7 @@ def create_app():
 
     @app.on_event("startup")
     def on_startup():
-        logging.info("Aykya FL Client started and is listening on http://0.0.0.0:7000")
+        logging.info("Aikya FL Client started and is listening on http://0.0.0.0:7000")
     # Set up CORS
     app.add_middleware(
         CORSMiddleware,
