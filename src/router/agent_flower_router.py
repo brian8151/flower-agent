@@ -13,7 +13,7 @@ flower_router = APIRouter()
 async def receive_data(request: PredictionRequest):
     try:
         logger.info(f"Domain Type: {request.domain_type}")
-        logger.info(f"Workflow Trace ID: {request.workflowtraceId}")
+        logger.info(f"Workflow Trace ID: {request.workflow_trace_id}")
         for item in request.data:
             logger.info(f"Received data: {item.features}")
         return {"status": "success", "data_received": len(request.data)}
