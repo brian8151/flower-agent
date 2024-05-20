@@ -1,12 +1,17 @@
 from pydantic import BaseModel, Field
-
-from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
+
+
+class InitializerConfig(BaseModel):
+    module: str
+    class_name: str
+    config: Dict[str, Any]
+    registered_name: Optional[str] = None
 
 
 class LayerConfig(BaseModel):
     batch_input_shape: Optional[List[Optional[int]]] = None
-    dtype: str
+    dtype: Optional[str] = None
     sparse: Optional[bool] = None
     ragged: Optional[bool] = None
     name: Optional[str] = None
@@ -14,8 +19,8 @@ class LayerConfig(BaseModel):
     units: Optional[int] = None
     activation: Optional[str] = None
     use_bias: Optional[bool] = None
-    kernel_initializer: Optional[Dict[str, Any]] = None
-    bias_initializer: Optional[Dict[str, Any]] = None
+    kernel_initializer: Optional[InitializerConfig] = None
+    bias_initializer: Optional[InitializerConfig] = None
     kernel_regularizer: Optional[str] = None
     bias_regularizer: Optional[str] = None
     activity_regularizer: Optional[str] = None
@@ -44,4 +49,4 @@ class Model(BaseModel):
 
 
 class WeightRequest(BaseModel):
-    model: Model = Field(..., alias="model", description="model")
+    model: Model
