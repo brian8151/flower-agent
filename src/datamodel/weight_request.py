@@ -60,7 +60,7 @@ class PredictionRequest(BaseModel):
 
 class WeightRequest(BaseModel):
     # model: FullModelConfig = Field(..., alias="model", description="Model configuration")
-    model = Field(..., alias="model", description="Model configuration")
+    model: str = Field(..., alias="model", description="Model configuration")
 
 
 def convert_to_dict(obj):
