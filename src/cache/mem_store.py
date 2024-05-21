@@ -5,9 +5,7 @@ logger = log.init_logger()
 # Global in-memory database connection and cursor (to preserve data during server runtime)
 def setup_mem_store():
     try:
-        print("sqlite3----")
         conn = sqlite3.connect(':memory:')
-        print("sqlite3.connect----")
         cursor = conn.cursor()
 
         # Create the model table
