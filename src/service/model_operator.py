@@ -13,14 +13,15 @@ class ModelOperator:
 
     def initial_mem_store(self):
         logger.info("Initializing model mem store")
-        print("---Setup.....")
         setup_mem_store()
         logger.info("Completed setup model mem store")
         model_name_conf = get_config("app.model.name")
+        logger.info("loading models: {0}".format(model_name_conf))
         model_names = [name.strip() for name in model_name_conf.split(',')]
         self.add_model(model_names)
 
     def add_model(self, model_names):
+        print("add_model......")
         # Loop through the list and process each model name
         for model in model_names:
             print(model)
