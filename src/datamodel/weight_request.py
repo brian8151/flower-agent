@@ -29,21 +29,21 @@ from typing import List, Optional, Dict, Any
 #     build_config: Optional[Dict[str, Any]] = None
 #
 #
-# class Layer(BaseModel):
-#     module: str
-#     class_name: str
-#     config: LayerConfig
-#     registered_name: Optional[str] = None
-#
-#
-# class ModelConfig(BaseModel):
-#     name: str
-#     layers: List[Layer]
-#
-#
+class Layer(BaseModel):
+    module: str
+    class_name: str
+    # config: LayerConfig
+    registered_name: Optional[str] = None
+
+
+class ModelConfig(BaseModel):
+    name: str
+    layers: List[Layer]
+
+
 class FullModelConfig(BaseModel):
     class_name: str
-    config: str
+    config: ModelConfig
     keras_version: str
     backend: str
 
