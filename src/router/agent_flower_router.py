@@ -17,7 +17,7 @@ flower_router = APIRouter()
 async def receive_data(request: WeightRequest):
     try:
         logger.info(f"model: {request.model}")
-        model_data = convert_json_to_python()
+        model_data = convert_json_to_python(request.model)
         logger.info(f"covertted json to python: {model_data}")
         model_runner = ModelRunner()
         weights = model_runner.get_model_weights(model_data)
