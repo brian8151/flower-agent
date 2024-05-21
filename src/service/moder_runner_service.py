@@ -1,4 +1,4 @@
-from src.mlmodel.model_builder import build_model_from_config, load_model_from_json_string
+from src.mlmodel.model_builder import build_model_from_config, load_model_from_json_string, compress_weights
 from src.mlmodel.payment.model import get_payment_config
 from src.util import log
 
@@ -41,7 +41,17 @@ class ModelRunner:
             return weights_serializable
             return weights
         except Exception as e:
-            logger.error(f"Error getting model weights: {e}")
+            logger.error(f"Error getting model weights with serialize: {e}")
+            raise
+
+    def get_model_weights_with_compression(self, model_json: str):
+        try:
+            model_weights = self.get_model_weights(model_json)
+            # Compress and encode weights
+            weights_compressed = compress_weights(model_weights)
+            return weights_compressed
+        except Exception as e:
+            logger.error(f"Error getting model weights with compression: {e}")
             raise
 
     def run_mode_prediction(self, workflow_trace_id, domain_type, data, weights=None):
