@@ -23,7 +23,7 @@ async def get_weights(request: WeightRequest):
 
 
 @flower_router.post("/predict")
-async def predict_data(request: PredictionReq):
+async def predict(request: PredictionReq):
     try:
         logger.info(f"Domain Type: {request.domain_type}")
         logger.info(f"Workflow Trace ID: {request.workflow_trace_id}")
@@ -36,6 +36,7 @@ async def predict_data(request: PredictionReq):
     except Exception as e:
         logger.error(f"Error predict data: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
 
 @flower_router.post("/predict-data")
 async def predict_data(request: PredictionRequest):
