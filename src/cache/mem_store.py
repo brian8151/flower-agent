@@ -1,29 +1,38 @@
 import sqlite3
-
+from src.util import log
+logger = log.init_logger()
 
 # Global in-memory database connection and cursor (to preserve data during server runtime)
 def setup_mem_store():
-    print("sqlite3----")
-    conn = sqlite3.connect(':memory:')
-    cursor = conn.cursor()
+    try:
+        print("sqlite3----")
+        conn = sqlite3.connect(':memory:')
+        print("sqlite3.connect----")
+        cursor = conn.cursor()
 
-    # Create the model table
-    cursor.execute('''CREATE TABLE model (
-                        id INTEGER PRIMARY KEY,
-                        name TEXT,
-                        definition BLOB
-                      )''')
+        # Create the model table
+        cursor.execute('''CREATE TABLE model (
+                            id INTEGER PRIMARY KEY,
+                            name TEXT,
+                            definition BLOB
+                          )''')
 
-    # Create the weight table
-    cursor.execute('''CREATE TABLE weight (
-                        id INTEGER PRIMARY KEY,
-                        model_id INTEGER,
-                        weights BLOB,
-                        FOREIGN KEY (model_id) REFERENCES model_table(id)
-                      )''')
+        # Create the weight table
+        cursor.execute('''CREATE TABLE weight (
+                            id INTEGER PRIMARY KEY,
+                            model_id INTEGER,
+                            weights BLOB,
+                            FOREIGN KEY (model_id) REFERENCES model_table(id)
+                          )''')
 
-    conn.commit()
-    conn.close()
+        conn.commit()
+    except sqlite3.Error as e:
+        logger.error("SQLite error: %s", e)
+    except Exception as e:
+        logger.error("Unexpected error: %s", e)
+    finally:
+        if conn:
+            conn.close()
 
 
 # get model data
