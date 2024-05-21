@@ -1,6 +1,5 @@
-from typing import List, Optional, Dict, Any
-
 from pydantic import BaseModel, Field
+from typing import List, Optional, Dict, Any
 
 
 class InitializerConfig(BaseModel):
@@ -8,6 +7,7 @@ class InitializerConfig(BaseModel):
     class_name: str
     config: Dict[str, Any]
     registered_name: Optional[str] = None
+
 
 class LayerConfig(BaseModel):
     batch_input_shape: Optional[List[Optional[int]]] = None
@@ -28,15 +28,18 @@ class LayerConfig(BaseModel):
     bias_constraint: Optional[Dict[str, Any]] = None
     build_config: Optional[Dict[str, Any]] = None
 
+
 class Layer(BaseModel):
     module: str
     class_name: str
     config: LayerConfig
     registered_name: Optional[str] = None
 
+
 class ModelConfig(BaseModel):
     name: str
     layers: List[Layer]
+
 
 class FullModelConfig(BaseModel):
     class_name: str
@@ -44,8 +47,10 @@ class FullModelConfig(BaseModel):
     keras_version: str
     backend: str
 
+
 class DataItem(BaseModel):
     features: List[float] = Field(..., alias="features", description="prediction data features")
+
 
 class PredictionRequest(BaseModel):
     domain_type: str = Field(..., alias="domainType", description="data seed domain type")
@@ -53,8 +58,9 @@ class PredictionRequest(BaseModel):
     data: List[DataItem] = Field(..., alias="data", description="prediction data list")
     model_config: FullModelConfig = Field(..., alias="modelConfig", description="model configuration")
 
+
 class WeightRequest(BaseModel):
-    model: FullModelConfig = Field(..., alias="modelConfig", description="model configuration")
+    model: FullModelConfig = Field(..., alias="model", description="model configuration")
 
 
 def convert_to_dict(obj):
