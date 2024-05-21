@@ -11,22 +11,22 @@ class InitializerConfig(BaseModel):
 
 class LayerConfig(BaseModel):
     batch_input_shape: Optional[List[Optional[int]]] = None
-    dtype: Optional[str] = None
-    sparse: Optional[bool] = None
-    ragged: Optional[bool] = None
-    name: Optional[str] = None
-    trainable: Optional[bool] = None
-    units: Optional[int] = None
-    activation: Optional[str] = None
-    use_bias: Optional[bool] = None
-    kernel_initializer: Optional[InitializerConfig] = None
-    bias_initializer: Optional[InitializerConfig] = None
-    kernel_regularizer: Optional[Any] = None
-    bias_regularizer: Optional[Any] = None
-    activity_regularizer: Optional[Any] = None
-    kernel_constraint: Optional[Any] = None
-    bias_constraint: Optional[Any] = None
-    build_config: Optional[Dict[str, Any]] = None
+    # dtype: Optional[str] = None
+    # sparse: Optional[bool] = None
+    # ragged: Optional[bool] = None
+    # name: Optional[str] = None
+    # trainable: Optional[bool] = None
+    # units: Optional[int] = None
+    # activation: Optional[str] = None
+    # use_bias: Optional[bool] = None
+    # kernel_initializer: Optional[InitializerConfig] = None
+    # bias_initializer: Optional[InitializerConfig] = None
+    # kernel_regularizer: Optional[Any] = None
+    # bias_regularizer: Optional[Any] = None
+    # activity_regularizer: Optional[Any] = None
+    # kernel_constraint: Optional[Any] = None
+    # bias_constraint: Optional[Any] = None
+    # build_config: Optional[Dict[str, Any]] = None
 
 
 class Layer(BaseModel):
@@ -37,8 +37,8 @@ class Layer(BaseModel):
 
 
 class ModelConfig(BaseModel):
-    # name: str
-    # layers: List[Layer]
+    name: str
+    layers: List[Layer]
 
 
 class FullModelConfig(BaseModel):
