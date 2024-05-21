@@ -33,7 +33,6 @@ class ModelOperator:
             response_body = json.loads(response.text)
             # Convert model string to dictionary
             model_res = json.loads(response_body['model'])
-            print(model_res)
             model_data = json.dumps(model_res).encode('utf-8')
             # save to db
             add_model(model, model_data)

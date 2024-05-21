@@ -1,7 +1,9 @@
 """ Ethreum Event Publisher """
 
-import requests
 import json
+
+import requests
+
 from src.util import log
 
 logger = log.init_logger()
@@ -16,7 +18,7 @@ class HttpUtils:
         try:
             headers = {"Content-Type": "application/json"}
             response = requests.get(url, headers=headers)
-            logger.info("HTTP GET request successful. Response: %s", response.text)
+            # logger.info("HTTP GET request successful. Response: %s", response.text)
             return response
         except Exception as err:
             logger.error("Error sending HTTP GET request: %s", err, exc_info=True)
