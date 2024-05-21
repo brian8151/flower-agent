@@ -15,7 +15,7 @@ flower_router = APIRouter()
 async def get_weights(request: WeightRequest):
     try:
         model_runner = ModelRunner()
-        weights = model_runner.get_model_weights(request.model_json)
+        weights = model_runner.get_model_weights(request.model)
         return {"status": "success", "weights": weights}
     except Exception as e:
         logger.error(f"Error getting model weights: {e}")
