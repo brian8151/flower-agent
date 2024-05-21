@@ -11,7 +11,7 @@ logger = log.init_logger()
 flower_router = APIRouter()
 
 
-@flower_router.post("/get-initial-weights")
+@flower_router.post("/getInitialWeights")
 async def get_weights(request: WeightRequest):
     try:
         model_runner = ModelRunner()
