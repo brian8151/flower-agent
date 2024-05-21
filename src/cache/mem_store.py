@@ -98,7 +98,7 @@ def get_weight_by_model(model_name: str):
         cursor.execute('''SELECT weight.weights 
                           FROM weight 
                           JOIN model ON weight.model_id = model.id 
-                          WHERE model.model_name = ?''', (model_name,))
+                          WHERE model.name = ?''', (model_name,))
         row = cursor.fetchone()
         if row:
             return row[0]
