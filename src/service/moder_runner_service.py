@@ -1,3 +1,4 @@
+from src.datamodel.weight_request import convert_to_dict
 from src.mlmodel.model_builder import build_model_from_config
 from src.mlmodel.payment.model import get_payment_config
 from src.util import log
@@ -23,8 +24,9 @@ class ModelRunner:
         model = build_model_from_config(config)
         return model
 
-    def get_model_weights(self, model_config):
-        model = build_model_from_config(model_config)
+    def get_model_weights(self, model_config_json):
+        model_config_dict = convert_to_dict(model_config_json)
+        model = build_model_from_config(model_config_dict)
         return model.get_weights()
 
     def run_mode_prediction(self, workflow_trace_id, domain_type, data, weights=None):

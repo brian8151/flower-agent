@@ -29,3 +29,4 @@ def build_model_from_config(config):
         model.add(layer)
 
     return model
+
