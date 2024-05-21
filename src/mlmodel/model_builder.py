@@ -11,7 +11,7 @@ def build_model_from_config(config):
         class_ = getattr(module, layer_config['class_name'])
 
         # Extract layer configuration
-        layer_kwargs = layer_config['config'].dict()
+        layer_kwargs = layer_config['config']
 
         # Handle special cases such as input shape
         if 'batch_input_shape' in layer_kwargs:
