@@ -24,6 +24,10 @@ def setup_mem_store():
                           )''')
 
         conn.commit()
+        # Query to list all tables
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = cursor.fetchall()
+        logger.info("==========>  Tables in the database: %s  <============", tables)
     except sqlite3.Error as e:
         logger.error("SQLite error: %s", e)
     except Exception as e:
