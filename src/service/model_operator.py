@@ -26,7 +26,8 @@ class ModelOperator:
         for model in model_names:
             logger.info("adding model: {0}".format(model))
             orchestrator_client_url = get_config("app.orchestrator.client.url")
-            response = self.http_utils.call_get(orchestrator_client_url)
+            model_url =  orchestrator_client_url + "/model/"+ model
+            response = self.http_utils.call_get(model_url)
             logger.info("model response: {0}".format(response))
             # Assuming the response body is in JSON format
             response_body = json.loads(response.text)
