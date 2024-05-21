@@ -1,6 +1,6 @@
 
 
-def convert_json_to_python(data):
+def convert_json_to_python(self, data):
     if isinstance(data, dict):
         for key, value in data.items():
             if value == "null":
