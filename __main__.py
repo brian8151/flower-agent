@@ -3,13 +3,20 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from src.router.agent_flower_router import flower_router
 import logging
+
+from src.service.model_operator import ModelOperator
+
+
 def create_app():
     logging.getLogger("uvicorn.error").setLevel(logging.INFO)
     app = FastAPI()
 
     @app.on_event("startup")
     def on_startup():
+        modelOps = ModelOperator
+        modelOps.initial_mem_store()
         logging.info("Aikya FL Client started and is listening on http://0.0.0.0:7000")
+
     # Set up CORS
     app.add_middleware(
         CORSMiddleware,
@@ -18,7 +25,7 @@ def create_app():
         allow_methods=["*"],  # Allows all methods
         allow_headers=["*"],  # Allows all headers
     )
-    app.include_router(flower_router, prefix="/flwr")
+    app.include_router(flower_router, prefix="/flwr/api")
     return app
 
 

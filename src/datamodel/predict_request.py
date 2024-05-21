@@ -10,3 +10,10 @@ class PredictionRequest(BaseModel):
     domain_type: str = Field(..., alias="domainType", description="data seed domain type")
     workflow_trace_id: str = Field(..., alias="workflowTraceId", description="workflow trace id")
     data: List[DataItem] = Field(..., alias="data", description="prediction data list")
+
+
+class PredictionReq(BaseModel):
+    domain_type: str = Field(..., alias="domainType", description="data seed domain type")
+    workflow_trace_id: str = Field(..., alias="workflowTraceId", description="workflow trace id")
+    data: List[DataItem] = Field(..., alias="data", description="prediction data list")
+    weights: str = Field(..., alias="weights", description="model weights")
