@@ -31,5 +31,6 @@ class ModelOperator:
             logger.info("model response: {0}".format(response))
             # Assuming the response body is in JSON format
             response_body = json.loads(response.text)
-            model_res = response_body.model
+            # Convert model string to dictionary
+            model_res = json.loads(response_body['model'])
             print(model_res)
