@@ -1,13 +1,11 @@
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
 
-
 class InitializerConfig(BaseModel):
     module: str
     class_name: str
     config: Dict[str, Any]
     registered_name: Optional[str] = None
-
 
 class LayerConfig(BaseModel):
     batch_input_shape: Optional[List[Optional[int]]] = None
@@ -21,13 +19,12 @@ class LayerConfig(BaseModel):
     use_bias: Optional[bool] = None
     kernel_initializer: Optional[InitializerConfig] = None
     bias_initializer: Optional[InitializerConfig] = None
-    kernel_regularizer: Optional[Dict[str, Any]] = None
-    bias_regularizer: Optional[Dict[str, Any]] = None
-    activity_regularizer: Optional[Dict[str, Any]] = None
-    kernel_constraint: Optional[Dict[str, Any]] = None
-    bias_constraint: Optional[Dict[str, Any]] = None
+    kernel_regularizer: Optional[Any] = None
+    bias_regularizer: Optional[Any] = None
+    activity_regularizer: Optional[Any] = None
+    kernel_constraint: Optional[Any] = None
+    bias_constraint: Optional[Any] = None
     build_config: Optional[Dict[str, Any]] = None
-
 
 class Layer(BaseModel):
     module: str
@@ -35,11 +32,9 @@ class Layer(BaseModel):
     config: LayerConfig
     registered_name: Optional[str] = None
 
-
 class ModelConfig(BaseModel):
     name: str
     layers: List[Layer]
-
 
 class FullModelConfig(BaseModel):
     class_name: str
@@ -47,10 +42,8 @@ class FullModelConfig(BaseModel):
     keras_version: str
     backend: str
 
-
 class DataItem(BaseModel):
     features: List[float] = Field(..., alias="features", description="prediction data features")
-
 
 class PredictionRequest(BaseModel):
     domain_type: str = Field(..., alias="domainType", description="data seed domain type")
@@ -58,9 +51,8 @@ class PredictionRequest(BaseModel):
     data: List[DataItem] = Field(..., alias="data", description="prediction data list")
     model_config: FullModelConfig = Field(..., alias="modelConfig", description="model configuration")
 
-
 class WeightRequest(BaseModel):
-    model: FullModelConfig = Field(..., alias="model", description="model configuration")
+    model: FullModelConfig = Field(..., alias="modelConfig", description="model configuration")
 
 
 def convert_to_dict(obj):
