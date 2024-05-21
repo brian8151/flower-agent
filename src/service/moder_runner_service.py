@@ -1,4 +1,4 @@
-from src.mlmodel.model_builder import build_model_from_config, load_model_from_json_string, compress_weights
+from src.mlmodel.model_builder import load_model_from_json_string, compress_weights
 from src.mlmodel.payment.model import get_payment_config
 from src.util import log
 
@@ -16,12 +16,6 @@ class ModelRunner:
             return get_payment_config()
         else:
             raise ValueError(f"Unsupported domain type: {domain_type}")
-
-    def build_model(self, domain_type):
-        config = self.get_model_config(domain_type)
-        # Building the model
-        model = build_model_from_config(config)
-        return model
 
     def get_model_weights(self, model_json: str):
         try:
