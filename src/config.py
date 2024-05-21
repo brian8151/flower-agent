@@ -8,4 +8,6 @@ load_dotenv(dotenv_path=_BASEDIR_ + "/app.env")
 
 # Define a function to access configuration values
 def get_config(key):
+    print(f"get_config {key}")
+    print(f"os.environ.get(key) {os.environ.get(key)}")
     return os.environ.get(key)
