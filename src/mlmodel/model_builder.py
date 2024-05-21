@@ -44,7 +44,7 @@ def decompress_weights(weights_encoded):
     return weights
 
 
-def build_model(self, domain_type):
+def build_model(domain_type):
     logger.info("get model from cache: {0}".format(domain_type))
     model_data_encoded = get_model(domain_type)
     # Decode the byte string to a UTF-8 string
