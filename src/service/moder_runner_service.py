@@ -1,5 +1,4 @@
-from src.mlmodel.model_builder import load_model_from_json_string, compress_weights
-from src.mlmodel.payment.model import get_payment_config
+from src.mlmodel.model_builder import load_model_from_json_string, compress_weights, build_model
 from src.util import log
 
 logger = log.init_logger()
@@ -11,12 +10,6 @@ class ModelRunner:
     def __init__(self):
         pass
 
-    def get_model_config(self, domain_type):
-        if domain_type == "payment":
-            return get_payment_config()
-        else:
-            raise ValueError(f"Unsupported domain type: {domain_type}")
-
     def get_model_weights(self, model_json: str):
         try:
             model = load_model_from_json_string(model_json)
@@ -26,6 +19,7 @@ class ModelRunner:
         except Exception as e:
             logger.error(f"Error getting model weights: {e}")
             raise
+
 
     def get_model_weights_with_serialize(self, model_json: str):
         try:
@@ -48,9 +42,9 @@ class ModelRunner:
             logger.error(f"Error getting model weights with compression: {e}")
             raise
 
-    def run_mode_prediction(self, workflow_trace_id, domain_type, data, weights=None):
+    def run_model_prediction(self, workflow_trace_id, domain_type, data, weights=None):
         logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
-        model = self.build_model(domain_type)
+        model = build_model(domain_type)
         logger.info("Model summary: {0}".format(model.summary()))
 
         if weights is None:

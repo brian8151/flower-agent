@@ -39,8 +39,11 @@ def get_model(name: int):
     cursor = conn.cursor()
     cursor.execute('''SELECT definition FROM model WHERE name=?''', (name,))
     row = cursor.fetchone()
+    if row:
+        return row[0]
+    else:
+        raise ValueError(f"Model {name} not found in the database")
     conn.close()
-    return {"model": row}
 
 
 # get weight data

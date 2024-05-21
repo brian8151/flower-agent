@@ -4,6 +4,8 @@ import contextlib
 import pickle
 import gzip
 import base64
+
+from src.cache.mem_store import get_model
 from src.util import log
 
 logger = log.init_logger()
@@ -40,3 +42,12 @@ def decompress_weights(weights_encoded):
     weights_serialized = gzip.decompress(weights_compressed)
     weights = pickle.loads(weights_serialized)
     return weights
+
+
+def build_model(self, domain_type):
+    model_data_encoded = get_model(domain_type)
+    # Decode the byte string to a UTF-8 string
+    model_json = model_data_encoded.decode('utf-8')
+    model = load_model_from_json_string(model_json)
+    # Building the model
+    return model

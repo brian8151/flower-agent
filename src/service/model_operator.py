@@ -1,4 +1,4 @@
-from src.cache.mem_store import setup_mem_store, get_model
+from src.cache.mem_store import setup_mem_store, get_model, add_model
 from src.config import get_config
 from src.protocol.http.http_utils import HttpUtils
 from src.util import log
@@ -34,3 +34,6 @@ class ModelOperator:
             # Convert model string to dictionary
             model_res = json.loads(response_body['model'])
             print(model_res)
+            model_data = json.dumps(model_res).encode('utf-8')
+            # save to db
+            add_model(model, model_data)
