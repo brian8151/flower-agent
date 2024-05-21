@@ -1,7 +1,9 @@
 import tensorflow as tf
 import importlib
 
+from src.util import log
 
+logger = log.init_logger()
 def build_model_from_config(config):
     model = tf.keras.Sequential(name=config['config']['name'])
 
