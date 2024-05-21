@@ -14,7 +14,8 @@ def create_app():
     @app.on_event("startup")
     def on_startup():
         logging.info("---------Initializing model mem store")
-        model_ops = ModelOperator
+        model_ops = ModelOperator()
+        logging.info("---------11111 tore")
         model_ops.initial_mem_store()
         logging.info("Aikya FL Client started and is listening on http://0.0.0.0:7000")
 
