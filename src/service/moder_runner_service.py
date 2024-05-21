@@ -33,6 +33,17 @@ class ModelRunner:
             logger.error(f"Error getting model weights: {e}")
             raise
 
+    def get_model_weights_with_serialize(self, model_json: str):
+        try:
+            model_weights = self.get_model_weights(model_json)
+            # Convert numpy arrays to lists for JSON serialization
+            weights_serializable = [w.tolist() for w in model_weights]
+            return weights_serializable
+            return weights
+        except Exception as e:
+            logger.error(f"Error getting model weights: {e}")
+            raise
+
     def run_mode_prediction(self, workflow_trace_id, domain_type, data, weights=None):
         logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
         model = self.build_model(domain_type)
