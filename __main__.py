@@ -1,6 +1,8 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+
+from src.cache.mem_store import close_connection
 from src.router.agent_flower_router import flower_router
 import logging
 from src.service.model_operator import ModelOperator
@@ -23,6 +25,10 @@ def create_app():
             logging.info("Aikya FL Client started and is listening on http://0.0.0.0:7000")
         except Exception as e:
             logging.error("Unexpected error: %s", e)
+
+    @app.on_event("shutdown")
+    def on_shutdown():
+        close_connection()
 
     # Set up CORS
     app.add_middleware(
