@@ -37,8 +37,8 @@ class Layer(BaseModel):
 
 
 class ModelConfig(BaseModel):
-    name: str
-    layers: List[Layer]
+    # name: str
+    # layers: List[Layer]
 
 
 class FullModelConfig(BaseModel):
@@ -60,7 +60,7 @@ class PredictionRequest(BaseModel):
 
 
 class WeightRequest(BaseModel):
-    model: FullModelConfig = Field(..., alias="modelConfig", description="Model configuration")
+    model: FullModelConfig = Field(..., alias="model", description="Model configuration")
 
 
 def convert_to_dict(obj):
