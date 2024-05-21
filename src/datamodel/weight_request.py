@@ -38,12 +38,12 @@ class Layer(BaseModel):
 
 class ModelConfig(BaseModel):
     name: str
-    # layers: List[Layer]
+    layers: List[Layer]
 
 
 class FullModelConfig(BaseModel):
     class_name: str
-    config: ModelConfig
+    # config: ModelConfig
     keras_version: str
     backend: str
 
