@@ -1,8 +1,12 @@
-from src.cache.mem_store import setup_mem_store, get_model, create_model
+import json
+import pickle
+
+from src.cache.mem_store import setup_mem_store, create_model, get_model_data, add_weight, get_weight_by_model
 from src.config import get_config
+from src.mlmodel.model_builder import load_model_from_json_string
 from src.protocol.http.http_utils import HttpUtils
 from src.util import log
-import json
+
 logger = log.init_logger()
 
 
@@ -37,3 +41,16 @@ class ModelOperator:
             logger.info("saving model : {0}".format(model))
             # save to db
             create_model(model, model_data)
+            self.add_weight(model)
+
+    def add_weight(self, model_name):
+        logger.info("saving weight model : {0}".format(model_name))
+        model_id, model_data_encoded = get_model_data(model_name)
+        model_json = model_data_encoded.decode('utf-8')
+        model = load_model_from_json_string(model_json)
+        weights = model.get_weights()
+        serialized_weights = pickle.dumps(weights)  # Serialize the weights
+        add_weight(model_id, serialized_weights)
+
+
+

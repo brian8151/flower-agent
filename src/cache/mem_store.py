@@ -1,6 +1,5 @@
 import sqlite3
 from src.util import log
-
 logger = log.init_logger()
 
 # Global connection variable
@@ -69,6 +68,18 @@ def get_model(name: int):
         logger.error("get_model - Unexpected error: %s", e)
 
 
+def get_model_data(name: int):
+    try:
+        conn, cursor = get_connection()
+        cursor.execute('''SELECT id, definition FROM model WHERE name=?''', (name,))
+        row = cursor.fetchone()
+        if row:
+            return row[0], row[1]
+        else:
+            raise ValueError(f"Model {name} not found in the database")
+    except Exception as e:
+        logger.error("get_model - Unexpected error: %s", e)
+
 # get weight data
 def get_weight(weight_id: int):
     try:
@@ -90,19 +101,21 @@ def get_weight_by_model(model_name: str):
                           WHERE model.model_name = ?''', (model_name,))
         row = cursor.fetchone()
         if row:
-            return {"weight": row[0]}
+            return row[0]
         else:
-            return {"weight": ""}
+            raise ValueError(f"Model weight - {model_name} not found in the database")
     except Exception as e:
         logger.error("get_weight_by_model - Unexpected error: %s", e)
 
 
 # add weight data
 def add_weight(model_id: int, weights: bytes):
+    logger.info("start adding weight: {0}".format(model_id))
     try:
         conn, cursor = get_connection()
         cursor.execute('''INSERT INTO weight (model_id, weights) VALUES (?, ?)''', (model_id, weights))
         conn.commit()
+        logger.info("complete add Weight, model id {0}".format(model_id))
         return {"message": "Weight added successfully"}
     except Exception as e:
         logger.error("add_weight - Unexpected error: %s", e)
