@@ -1,3 +1,4 @@
+import pickle
 import sqlite3
 from src.util import log
 logger = log.init_logger()
@@ -101,7 +102,9 @@ def get_weight_by_model(model_name: str):
                           WHERE model.name = ?''', (model_name,))
         row = cursor.fetchone()
         if row:
-            return row[0]
+            serialized_weights = row[0]
+            weights = pickle.loads(serialized_weights)  # Deserialize weights
+            return weights
         else:
             raise ValueError(f"Model weight - {model_name} not found in the database")
     except Exception as e:
