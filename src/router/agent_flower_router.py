@@ -7,6 +7,7 @@ from src.datamodel.data_item import PredictionRequest
 from src.datamodel.weight_request import WeightRequest
 from src.service.moder_runner_service import ModelRunner
 from src.util import log
+from src.util.app_util import convert_json_to_python
 
 logger = log.init_logger()
 flower_router = APIRouter()
@@ -16,8 +17,10 @@ flower_router = APIRouter()
 async def receive_data(request: WeightRequest):
     try:
         logger.info(f"model: {request.model}")
+        model_data = convert_json_to_python()
+        logger.info(f"covertted json to python: {model_data}")
         model_runner = ModelRunner()
-        weights = model_runner.get_model_weights(request.model)
+        weights = model_runner.get_model_weights(model_data)
         return {"status": "success", "weights": weights}
     except Exception as e:
         logger.error(f"Error get model weights: {e}")
