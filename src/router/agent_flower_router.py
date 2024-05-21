@@ -2,7 +2,7 @@ from http.client import HTTPException
 
 from fastapi import APIRouter
 
-from src.datamodel.predict_request import PredictionRequest, PredictionReq
+from src.datamodel.predict_request import PredictionRequest, PredictionWithWeightReq
 from src.datamodel.weight_request import WeightRequest
 from src.service.moder_runner_service import ModelRunner
 from src.util import log
@@ -22,8 +22,8 @@ async def get_weights(request: WeightRequest):
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 
-@flower_router.post("/predict")
-async def predict(request: PredictionReq):
+@flower_router.post("/predict-weights")
+async def predict(request: PredictionWithWeightReq):
     try:
         logger.info(f"Domain Type: {request.domain_type}")
         logger.info(f"Workflow Trace ID: {request.workflow_trace_id}")
@@ -38,7 +38,7 @@ async def predict(request: PredictionReq):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@flower_router.post("/predict-data")
+@flower_router.post("/predict")
 async def predict_data(request: PredictionRequest):
     try:
         logger.info(f"Domain Type: {request.domain_type}")

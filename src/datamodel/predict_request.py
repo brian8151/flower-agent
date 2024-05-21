@@ -12,7 +12,7 @@ class PredictionRequest(BaseModel):
     data: List[DataItem] = Field(..., alias="data", description="prediction data list")
 
 
-class PredictionReq(BaseModel):
+class PredictionWithWeightReq(BaseModel):
     domain_type: str = Field(..., alias="domainType", description="data seed domain type")
     workflow_trace_id: str = Field(..., alias="workflowTraceId", description="workflow trace id")
     data: List[DataItem] = Field(..., alias="data", description="prediction data list")
