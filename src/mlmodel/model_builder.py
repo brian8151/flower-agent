@@ -9,7 +9,7 @@ logger = log.init_logger()
 def load_model_from_json_string(model_json: str):
     try:
         model = tf.keras.models.model_from_json(model_json)
-        logger.info("Model architecture loaded successfully.")
+        logger.info("Model architecture loaded successfully. model {0}".format(model.summary()))
         return model
     except Exception as e:
         logger.error(f"Error loading model from JSON: {e}")
