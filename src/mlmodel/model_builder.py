@@ -19,12 +19,12 @@ def build_model_from_config(config):
             layer_kwargs = layer_config['config']
 
             # Handle special cases such as input shape
-            if 'batch_input_shape' in layer_kwargs and layer_kwargs['batch_input_shape'] is not None:
+            if layer_kwargs.get('batch_input_shape') is not None:
                 layer_kwargs['batch_input_shape'] = tuple(
                     None if dim is None else dim for dim in layer_kwargs['batch_input_shape']
                 )
 
-            if 'build_config' in layer_kwargs and 'input_shape' in layer_kwargs['build_config']:
+            if layer_kwargs.get('build_config') and 'input_shape' in layer_kwargs['build_config']:
                 layer_kwargs['input_shape'] = tuple(
                     None if dim is None else dim for dim in layer_kwargs['build_config']['input_shape']
                 )
@@ -34,7 +34,7 @@ def build_model_from_config(config):
 
             # Filter out keys that are not valid for this layer type
             valid_args = class_.__init__.__code__.co_varnames
-            layer_kwargs = {k: v for k, v in layer_kwargs.items() if k in valid_args}
+            layer_kwargs = {k: v for k, v in layer_kwargs.items() if v is not None and k in valid_args}
 
             # Ensure required arguments are present
             if class_ is tf.keras.layers.Dense and 'units' not in layer_kwargs:
