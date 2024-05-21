@@ -92,9 +92,11 @@ def add_weight(model_id: int, weights: bytes):
 
 # add model data
 def add_model(model_name: str, definition: bytes):
+    logger.info("start adding model: {0}".format(model_name))
     conn = sqlite3.connect(':memory:')
     cursor = conn.cursor()
     cursor.execute('''INSERT INTO model (name, definition) VALUES (?, ?)''', (model_name, definition))
     conn.commit()
     conn.close()
+    logger.info("complete add model: {0}".format(model_name))
     return {"message": "Model added successfully"}

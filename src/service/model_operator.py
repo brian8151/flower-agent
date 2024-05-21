@@ -28,11 +28,12 @@ class ModelOperator:
             orchestrator_client_url = get_config("app.orchestrator.client.url")
             model_url =  orchestrator_client_url + "/model/"+ model
             response = self.http_utils.call_get(model_url)
-            logger.info("model response: {0}".format(response))
+            logger.info("fetch model response: {0}".format(response))
             # Assuming the response body is in JSON format
             response_body = json.loads(response.text)
             # Convert model string to dictionary
             model_res = json.loads(response_body['model'])
             model_data = json.dumps(model_res).encode('utf-8')
+            logger.info("saving model : {0}".format(model))
             # save to db
             add_model(model, model_data)
