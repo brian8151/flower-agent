@@ -3,7 +3,7 @@ from typing import List
 
 
 class DataItem(BaseModel):
-    features: List[float] = Field(..., alias="features", description="prediction data features")
+    features: List[float] = Field(..., description="Prediction data features")
 
 
 class PredictionRequest(BaseModel):

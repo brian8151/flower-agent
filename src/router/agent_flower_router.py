@@ -2,7 +2,7 @@ from http.client import HTTPException
 
 from fastapi import APIRouter
 
-from src.datamodel.data_item import PredictionRequest
+from src.datamodel.predict_request import PredictionRequest
 from src.datamodel.weight_request import WeightRequest
 from src.service.moder_runner_service import ModelRunner
 from src.util import log
@@ -21,6 +21,7 @@ async def get_weights(request: WeightRequest):
     except Exception as e:
         logger.error(f"Error get model weights: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
+
 
 @flower_router.post("/predict-data")
 async def receive_data(request: PredictionRequest):

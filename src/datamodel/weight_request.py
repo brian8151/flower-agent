@@ -48,15 +48,6 @@ class FullModelConfig(BaseModel):
     backend: str
 
 
-class DataItem(BaseModel):
-    features: List[float] = Field(..., description="Prediction data features")
-
-
-class PredictionRequest(BaseModel):
-    domain_type: str = Field(..., alias="domainType", description="data seed domain type")
-    workflow_trace_id: str = Field(..., alias="workflowTraceId", description="workflow trace id")
-    data: List[DataItem] = Field(..., alias="data", description="prediction data list")
-
 
 class WeightRequest(BaseModel):
     # model: FullModelConfig = Field(..., alias="model", description="Model configuration")

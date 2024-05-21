@@ -25,7 +25,9 @@ class ModelRunner:
         return model
 
     def get_model_weights(self, model_config_json):
+        logger.info("convert_to_dict")
         model_config_dict = convert_to_dict(model_config_json)
+        logger.info("model_config_dict {0}".format(model_config_dict))
         model = build_model_from_config(model_config_dict)
         return model.get_weights()
 
