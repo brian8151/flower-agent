@@ -1,4 +1,3 @@
-from src.datamodel.weight_request import convert_to_dict
 from src.mlmodel.model_builder import build_model_from_config, load_model_from_json_string
 from src.mlmodel.payment.model import get_payment_config
 from src.util import log
