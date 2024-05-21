@@ -4,6 +4,8 @@ import importlib
 from src.util import log
 
 logger = log.init_logger()
+
+
 def build_model_from_config(config):
     model = tf.keras.Sequential(name=config['config']['name'])
 
@@ -27,16 +29,16 @@ def build_model_from_config(config):
                     None if dim is None else dim for dim in layer_kwargs['build_config']['input_shape']
                 )
 
+            # Ensure required arguments are present
+            if class_ is tf.keras.layers.Dense:
+                required_args = ['units']
+                for arg in required_args:
+                    if arg not in layer_kwargs:
+                        raise ValueError(f"Missing required argument '{arg}' for {class_.__name__}")
+
             # Filter out keys that are not valid for this layer type
             valid_args = class_.__init__.__code__.co_varnames
             layer_kwargs = {k: v for k, v in layer_kwargs.items() if k in valid_args}
-
-            # Check if all required arguments are provided
-            required_args = class_.__init__.__code__.co_varnames[:class_.__init__.__code__.co_argcount]
-            missing_args = [arg for arg in required_args if arg not in layer_kwargs and arg != 'self']
-
-            if missing_args:
-                raise ValueError(f"Missing required arguments for {class_.__name__}: {missing_args}")
 
             # Create layer and add to model
             layer = class_(**layer_kwargs)
