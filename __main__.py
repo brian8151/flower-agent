@@ -17,9 +17,12 @@ def create_app():
 
     @app.on_event("startup")
     def on_startup():
-        model_ops = ModelOperator()
-        model_ops.initial_mem_store()
-        logging.info("Aikya FL Client started and is listening on http://0.0.0.0:7000")
+        try:
+            model_ops = ModelOperator()
+            model_ops.initial_mem_store()
+            logging.info("Aikya FL Client started and is listening on http://0.0.0.0:7000")
+        except Exception as e:
+            logging.error("Unexpected error: %s", e)
 
     # Set up CORS
     app.add_middleware(
