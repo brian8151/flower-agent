@@ -14,13 +14,12 @@ flower_router = APIRouter()
 @flower_router.post("/get-initial-weights")
 async def get_weights(request: WeightRequest):
     try:
-        logger.info(f"model: {request.model}")
         model_runner = ModelRunner()
-        weights = model_runner.get_model_weights(request.model)
+        weights = model_runner.get_model_weights(request.model_json)
         return {"status": "success", "weights": weights}
     except Exception as e:
-        logger.error(f"Error get model weights: {e}")
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        logger.error(f"Error getting model weights: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 
 @flower_router.post("/predict-data")

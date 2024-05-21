@@ -6,6 +6,16 @@ from src.util import log
 logger = log.init_logger()
 
 
+def load_model_from_json_string(model_json: str):
+    try:
+        model = tf.keras.models.model_from_json(model_json)
+        logger.info("Model architecture loaded successfully.")
+        return model
+    except Exception as e:
+        logger.error(f"Error loading model from JSON: {e}")
+        raise
+
+
 def build_model_from_config(config):
     model = tf.keras.Sequential(name=config['config']['name'])
 
