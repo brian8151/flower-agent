@@ -57,10 +57,6 @@ class WeightRequest(BaseModel):
     model: FullModelConfig = Field(..., alias="modelConfig", description="model configuration")
 
 
-class DataItem(BaseModel):
-    features: List[float] = Field(..., alias="features", description="prediction data features")
-
-
 def convert_to_dict(obj):
     if isinstance(obj, BaseModel):
         obj_dict = obj.dict()
