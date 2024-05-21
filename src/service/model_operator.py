@@ -1,7 +1,8 @@
 from src.cache.mem_store import setup_mem_store, get_model
 from src.config import get_config
+from src.protocol.http.http_utils import HttpUtils
 from src.util import log
-
+import json
 logger = log.init_logger()
 
 
@@ -9,7 +10,7 @@ class ModelOperator:
     """ Class for handle model mem store """
 
     def __init__(self):
-        pass
+        self.http_utils = HttpUtils()
 
     def initial_mem_store(self):
         logger.info("Initializing model mem store")
@@ -21,7 +22,12 @@ class ModelOperator:
         self.add_model(model_names)
 
     def add_model(self, model_names):
-        print("add_model......")
         # Loop through the list and process each model name
         for model in model_names:
-            print(model)
+            logger.info("adding model: {0}".format(model))
+            orchestrator_client_url = get_config("app.orchestrator.client.url")
+            response = self.http_utils.call_get(orchestrator_client_url)
+            # Assuming the response body is in JSON format
+            response_body = json.loads(response.text)
+            model_res = response_body.model
+            print(model_res)
