@@ -41,11 +41,11 @@ from typing import List, Optional, Dict, Any
 #     layers: List[Layer]
 #
 #
-# class FullModelConfig(BaseModel):
-#     class_name: str
-#     config: ModelConfig
-#     keras_version: str
-#     backend: str
+class FullModelConfig(BaseModel):
+    class_name: str
+    config: str
+    keras_version: str
+    backend: str
 
 
 class DataItem(BaseModel):
@@ -60,7 +60,7 @@ class PredictionRequest(BaseModel):
 
 class WeightRequest(BaseModel):
     # model: FullModelConfig = Field(..., alias="model", description="Model configuration")
-    model: str = Field(..., alias="model", description="Model configuration")
+    model: FullModelConfig = Field(..., alias="model", description="Model configuration")
 
 
 def convert_to_dict(obj):
