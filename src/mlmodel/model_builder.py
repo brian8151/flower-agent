@@ -47,6 +47,7 @@ def decompress_weights(weights_encoded):
 def build_model(domain_type):
     logger.info("get model from cache: {0}".format(domain_type))
     model_data_encoded = get_model(domain_type)
+    logger.info("model_data_encoded: {0}".format(model_data_encoded))
     # Decode the byte string to a UTF-8 string
     model_json = model_data_encoded.decode('utf-8')
     model = load_model_from_json_string(model_json)

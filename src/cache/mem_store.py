@@ -59,10 +59,6 @@ def setup_mem_store():
 def get_model(name: int):
     try:
         conn, cursor = get_connection()
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-        tables = cursor.fetchall()
-        logger.info("==========>  Tables in the database: %s  <============", tables)
-        logger.info("fetch model for {0".format(name))
         cursor.execute('''SELECT definition FROM model WHERE name=?''', (name,))
         row = cursor.fetchone()
         if row:
