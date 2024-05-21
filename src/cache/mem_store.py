@@ -113,7 +113,7 @@ def add_weight(model_id: int, weights: bytes):
 
 
 # add model data
-def add_model(model_name: str, definition: bytes):
+def create_model(model_name: str, definition: bytes):
     logger.info("start adding model: {0}".format(model_name))
     try:
         conn, cursor = get_connection()

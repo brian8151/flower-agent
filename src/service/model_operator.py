@@ -1,4 +1,4 @@
-from src.cache.mem_store import setup_mem_store, get_model, add_model
+from src.cache.mem_store import setup_mem_store, get_model, create_model
 from src.config import get_config
 from src.protocol.http.http_utils import HttpUtils
 from src.util import log
@@ -36,4 +36,4 @@ class ModelOperator:
             model_data = json.dumps(model_res).encode('utf-8')
             logger.info("saving model : {0}".format(model))
             # save to db
-            add_model(model, model_data)
+            create_model(model, model_data)
