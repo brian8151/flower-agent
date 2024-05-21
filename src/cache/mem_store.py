@@ -2,7 +2,8 @@ import sqlite3
 
 
 # Global in-memory database connection and cursor (to preserve data during server runtime)
-def initial_mem_store():
+def setup_mem_store():
+    print("sqlite3----")
     conn = sqlite3.connect(':memory:')
     cursor = conn.cursor()
 

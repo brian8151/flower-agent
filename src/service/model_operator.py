@@ -1,4 +1,4 @@
-from src.cache.mem_store import initial_mem_store, get_model
+from src.cache.mem_store import setup_mem_store, get_model
 from src.config import get_config
 from src.util import log
 
@@ -13,7 +13,8 @@ class ModelOperator:
 
     def initial_mem_store(self):
         logger.info("Initializing model mem store")
-        initial_mem_store()
+        print("---Setup.....")
+        setup_mem_store()
         logger.info("Completed setup model mem store")
         model_name_conf = get_config("app.model.name")
         model_names = [name.strip() for name in model_name_conf.split(',')]
