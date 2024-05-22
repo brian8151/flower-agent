@@ -46,8 +46,6 @@ async def predict_data(request: PredictionRequest):
         logger.info(f"data_received: {len(request.data)}")
         model_runner = ModelRunner()
         data_req = model_runner.run_model_prediction(request.workflow_trace_id, request.domain_type, request.data)
-        for item in request.data:
-            logger.info(f"Received data: {item.features}")
         return {"status": "success", "data_received": len(request.data), "predictions": data_req}
     except Exception as e:
         logger.error(f"Error predict data: {e}")
