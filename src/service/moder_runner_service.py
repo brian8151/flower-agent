@@ -60,7 +60,9 @@ class ModelRunner:
                 weights_compressed = compress_weights(model_weights)
                 logger.info("saving model track records for domain '{0}'.".format(domain))
                 create_model_track_records(name, model_json, model_version, domain, weights_compressed, local_weights_version)
+                logger.info("model track records for domain '{0}' saved.".format(domain))
                 create_local_model_historical_records("0000000000000000000000000000", name, weights_compressed)
+                logger.info("local model historical records for domain '{0}' saved.".format(domain))
                 return weights_compressed
             else:
                 local_model_weights = model_track_record[2]
