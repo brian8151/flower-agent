@@ -67,4 +67,4 @@ def create_model_track_records(name, definition, model_version, domain_type, loc
     """
     sql = """insert into agent_model_records (name, definition, model_version, domain, local_model_weights, local_weights_version) VALUES('{}', '{}', '{}', '{}', '{}', '{}')""".format(
         name, definition, model_version, domain_type, local_model_weights, local_weights_version)
-    DBConnection.execute_query(sql)
+    DBConnection.execute_update(sql)
