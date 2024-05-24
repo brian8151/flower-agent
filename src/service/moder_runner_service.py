@@ -1,4 +1,5 @@
 from src.mlmodel.model_builder import load_model_from_json_string, compress_weights, build_model
+from src.repository.model.local_model_history_repository import create_local_model_historical_records
 from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records
 from src.util import log
 
@@ -60,7 +61,7 @@ class ModelRunner:
                 weights_compressed = compress_weights(model_weights)
                 logger.info(f"saving model track records for domain '{domain}'.")
                 create_model_track_records(name, model_json, model_version, domain, weights_compressed, local_weights_version)
-
+                create_local_model_historical_records("0000000000000000000000000000", name, weights_compressed)
                 return weights_compressed
             else:
                 local_model_weights = model_track_record[2]
