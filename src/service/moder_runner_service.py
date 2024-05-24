@@ -39,6 +39,7 @@ class ModelRunner:
         it creates an entry with the same model and weight.
 
         Parameters:
+            name (str): The name of model.
             domain (str): The domain for which to initialize weights.
             model_version (str): The version of the model.
             model_json (str): The JSON representation of the model.
