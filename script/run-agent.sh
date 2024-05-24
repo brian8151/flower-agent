@@ -5,13 +5,13 @@ NODE=$1
 CMD=${2:-start}  # Default to 'start' if no second argument is given
 
 # Configuration
-APP_DIR_BASE="/home/ec2-user/flwr-test"
+APP_DIR_BASE="/home/ubuntu"
 APP_DIR="$APP_DIR_BASE/flower-agent"
 LOG_PATH="$APP_DIR_BASE"  # Modified path for clarity and to ensure it exists
-PYTHON_BIN="/usr/local/bin/python3.9"
+PYTHON_BIN="/usr/local/bin/python3.10"
 
 cd $APP_DIR
-echo "Running from flower-agent directory: $(pwd)"
+echo "Running from fl-agent directory: $(pwd)"
 
 # Function to install dependencies if needed
 install_deps() {
@@ -38,16 +38,16 @@ start_app() {
 stop_app() {
     local pid=$(ps aux | grep -i 'flower-agent' | grep -v grep | awk '{print $2}')
     if [[ ! -z "$pid" ]]; then
-        echo "Found process $pid, shutting down flower-agent..."
+        echo "Found process $pid, shutting down fl-agent..."
         kill $pid
         sleep 2
         if ps -p $pid > /dev/null; then
             echo "Process $pid did not terminate, forcing shutdown..."
             kill -9 $pid
         fi
-        echo "Flower agent stopped."
+        echo "FL agent stopped."
     else
-        echo "No process found for flower-agent."
+        echo "No process found for fl-agent."
     fi
 }
 
