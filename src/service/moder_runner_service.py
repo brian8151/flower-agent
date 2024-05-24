@@ -15,7 +15,7 @@ class ModelRunner:
         try:
             model = load_model_from_json_string(model_json)
             weights = model.get_weights()
-            logger.info("get model weight: {0}".format(weights))
+            # logger.info("get model weight: {0}".format(weights))
             return weights
         except Exception as e:
             logger.error(f"Error getting model weights: {e}")
