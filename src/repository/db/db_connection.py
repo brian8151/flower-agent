@@ -42,6 +42,20 @@ class DBConnection(object):
         return result
 
     @classmethod
+    def execute_fetch_one(cls, query):
+        """execute query on singleton db connection"""
+        connection = cls.get_connection()
+        try:
+            cursor = connection.cursor()
+        except mysql.connector.Error as err:
+            print("db connection error: {}".format(err))
+            connection = cls.get_connection(new=True)  # Create new connection
+            cursor = connection.cursor()
+        cursor.execute(query)
+        result = cursor.fetchone()
+        cursor.close()
+        return result
+    @classmethod
     def execute_update(cls, query):
         """execute query on singleton db connection"""
         connection = cls.get_connection()
