@@ -1,6 +1,5 @@
-from src.cache.mem_store import get_weight_by_model
 from src.mlmodel.model_builder import load_model_from_json_string, compress_weights, build_model
-from src.repository.model.model_track_repository import get_global_model_track, create_model_track
+from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records
 from src.util import log
 
 logger = log.init_logger()
@@ -51,17 +50,17 @@ class ModelRunner:
             Exception: If there is an error in getting or processing model weights.
         """
         try:
-            global_model_track = get_global_model_track(domain)
-            if not global_model_track:
+            model_track_record = get_model_track_record(domain)
+            if not model_track_record:
                 logger.info(f"No global model track found for domain '{domain}'. Creating a new entry.")
                 local_weights_version = 1
                 model_weights = self.get_model_weights(model_json)
                 # Compress and encode weights
                 weights_compressed = compress_weights(model_weights)
-                create_model_track(domain, model_json, model_version, domain, weights_compressed, local_weights_version)
+                create_model_track_records(domain, model_json, model_version, domain, weights_compressed, local_weights_version)
                 return weights_compressed
             else:
-                local_model_weights = global_model_track[2]
+                local_model_weights = model_track_record[2]
                 return local_model_weights
         except Exception as e:
             logger.error(f"Error getting model weights with compression: {e}")
@@ -77,19 +76,19 @@ class ModelRunner:
             logger.error(f"Error getting model weights with compression: {e}")
             raise
 
-    def run_model_prediction(self, workflow_trace_id, domain_type, data, weights=None):
+    def run_model_prediction(self, workflow_trace_id, domain_type, data):
         logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
         model = build_model(domain_type)
         logger.info("Model summary: {0}".format(model.summary()))
-
-        if weights is None:
-            logger.info("Weight is empty, get from cache")
-            weights = get_weight_by_model(domain_type)
-            if weights is None:
-                logger.info("Weight in Cache is empty, get model")
-                weights = model.get_weights()
-            else:
-                logger.info("found Weight in Cache")
+        model_track_record = get_model_track_record(domain_type)
+        local_model_weights = model_track_record[2]
+        global_model_weights = model_track_record[4]
+        if global_model_weights is None:
+            logger.info("global_model_weights is empty, use default local model weight")
+            weights = local_model_weights
+        else:
+            logger.info("found global_model_weights")
+            weights = global_model_weights
 
         model.set_weights(weights)
         y_hat = model.predict([item.features for item in data])

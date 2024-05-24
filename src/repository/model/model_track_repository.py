@@ -1,7 +1,7 @@
 from src.repository.db.db_connection import DBConnection
 
 
-def get_global_model_track(domain):
+def get_model_track_record(domain):
     """
     Retrieve the global model track for the given domain from the database.
 
@@ -20,6 +20,7 @@ def get_global_model_track(domain):
     if result:
         return result[0][0], result[0][1], result[0][2], result[0][3], result[0][4], result[0][5]
     return ()
+
 
 
 def update_global_model_track(name, global_model_weights, global_weights_version):
@@ -54,7 +55,7 @@ def update_local_model_track(name, local_model_weights, local_weights_version):
     DBConnection.execute_update(sql)
 
 
-def create_model_track(name, definition, model_version, domain_type, local_model_weights, local_weights_version ):
+def create_model_track_records(name, definition, model_version, domain_type, local_model_weights, local_weights_version ):
     """
     create data process status to the database.
 

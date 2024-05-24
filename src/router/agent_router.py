@@ -12,7 +12,7 @@ agent_router = APIRouter()
 
 
 @agent_router.post("/initial-weights")
-async def get_weights(request: WeightRequest):
+async def initialWeeights(request: WeightRequest):
     try:
         model_runner = ModelRunner()
         weights = model_runner.initial_weights(request.domain,request.version, request.model)
