@@ -2,7 +2,6 @@ from src.mlmodel.model_builder import load_model_from_json_string, compress_weig
 from src.repository.model.local_model_history_repository import create_local_model_historical_records
 from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records
 from src.util import log
-
 logger = log.init_logger()
 
 
