@@ -12,8 +12,8 @@ def create_local_model_historical_records(workflow_trace_id, name, model_weights
         model_weights (str): local model weights.
     """
     max_version_sql = """
-        SELECT IFNULL(MAX(version), 0) FROM agent_local_model_history WHERE workflow_trace_id = %s
-        """
+        SELECT IFNULL(MAX(version), 0) FROM agent_local_model_history WHERE name ='{}
+        """.format(name)
     result = DBConnection.execute_fetch_one(max_version_sql)
     max_version = result[0] +1
     logger.info("create_local_model_historical_records max_version: {0}".format(max_version))
