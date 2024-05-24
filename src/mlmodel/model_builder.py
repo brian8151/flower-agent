@@ -5,7 +5,7 @@ import pickle
 import gzip
 import base64
 
-from src.cache.mem_store import get_model
+from src.repository.model.model_track_repository import get_model_track_record
 from src.util import log
 
 logger = log.init_logger()
@@ -46,11 +46,8 @@ def decompress_weights(weights_encoded):
 
 def build_model(domain_type):
     logger.info("get model from cache: {0}".format(domain_type))
-    model_data_encoded = get_model(domain_type)
-    # logger.info("model_data_encoded: {0}".format(model_data_encoded))
-    # Decode the byte string to a UTF-8 string
-    model_json = model_data_encoded.decode('utf-8')
-    model = load_model_from_json_string(model_json)
+    model_track_record = get_model_track_record(domain_type)
+    model = load_model_from_json_string(model_track_record[0])
     logger.info("success loaded model: {0}".format(domain_type))
     # Building the model
     return model
