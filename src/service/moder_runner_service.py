@@ -1,5 +1,6 @@
 from src.cache.mem_store import get_weight_by_model
 from src.mlmodel.model_builder import load_model_from_json_string, compress_weights, build_model
+from src.repository.model.model_track_repository import get_global_model_track, create_model_track
 from src.util import log
 
 logger = log.init_logger()
@@ -31,6 +32,39 @@ class ModelRunner:
             return weights
         except Exception as e:
             logger.error(f"Error getting model weights with serialize: {e}")
+            raise
+
+    def initial_weights(self, domain, model_version, model_json: str):
+        """
+        Initialize weights for the given domain. If no global model track exists for the domain,
+        it creates an entry with the same model and weight.
+
+        Parameters:
+            domain (str): The domain for which to initialize weights.
+            model_version (str): The version of the model.
+            model_json (str): The JSON representation of the model.
+
+        Returns:
+            str: Compressed and encoded model weights.
+
+        Raises:
+            Exception: If there is an error in getting or processing model weights.
+        """
+        try:
+            global_model_track = get_global_model_track(domain)
+            if not global_model_track:
+                logger.info(f"No global model track found for domain '{domain}'. Creating a new entry.")
+                local_weights_version = 1
+                model_weights = self.get_model_weights(model_json)
+                # Compress and encode weights
+                weights_compressed = compress_weights(model_weights)
+                create_model_track(domain, model_json, model_version, domain, weights_compressed, local_weights_version)
+                return weights_compressed
+            else:
+                local_model_weights = global_model_track[2]
+                return local_model_weights
+        except Exception as e:
+            logger.error(f"Error getting model weights with compression: {e}")
             raise
 
     def get_model_weights_with_compression(self, model_json: str):

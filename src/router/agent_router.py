@@ -8,21 +8,21 @@ from src.service.moder_runner_service import ModelRunner
 from src.util import log
 
 logger = log.init_logger()
-flower_router = APIRouter()
+agent_router = APIRouter()
 
 
-@flower_router.post("/initial-weights")
+@agent_router.post("/initial-weights")
 async def get_weights(request: WeightRequest):
     try:
         model_runner = ModelRunner()
-        weights = model_runner.get_model_weights_with_compression(request.model)
-        return {"status": "success", "weights": weights}
+        weights = model_runner.initial_weights(request.domain,request.version, request.model)
+        return {"status": "success", "domain": request.domain, "weights": weights}
     except Exception as e:
         logger.error(f"Error getting model weights: {e}")
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 
-@flower_router.post("/predict-weights")
+@agent_router.post("/predict-weights")
 async def predict(request: PredictionWithWeightReq):
     try:
         logger.info(f"Domain Type: {request.domain_type}")
@@ -38,7 +38,7 @@ async def predict(request: PredictionWithWeightReq):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@flower_router.post("/predict")
+@agent_router.post("/predict")
 async def predict_data(request: PredictionRequest):
     try:
         logger.info(f"Domain Type: {request.domain_type}")
