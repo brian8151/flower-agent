@@ -33,7 +33,7 @@ class ModelRunner:
             logger.error(f"Error getting model weights with serialize: {e}")
             raise
 
-    def initial_weights(self, domain, model_version, model_json: str):
+    def initial_weights(self, name, domain, model_version, model_json: str):
         """
         Initialize weights for the given domain. If no global model track exists for the domain,
         it creates an entry with the same model and weight.
@@ -57,7 +57,9 @@ class ModelRunner:
                 model_weights = self.get_model_weights(model_json)
                 # Compress and encode weights
                 weights_compressed = compress_weights(model_weights)
-                create_model_track_records(domain, model_json, model_version, domain, weights_compressed, local_weights_version)
+                logger.info(f"saving model track records for domain '{domain}'.")
+                create_model_track_records(name, model_json, model_version, domain, weights_compressed, local_weights_version)
+
                 return weights_compressed
             else:
                 local_model_weights = model_track_record[2]

@@ -55,7 +55,7 @@ def update_local_model_track(name, local_model_weights, local_weights_version):
     DBConnection.execute_update(sql)
 
 
-def create_model_track_records(name, definition, model_version, domain_type, local_model_weights, local_weights_version ):
+def create_model_track_records(name, definition, model_version, domain_type, local_model_weights, local_weights_version):
     """
     create data process status to the database.
 
@@ -64,6 +64,8 @@ def create_model_track_records(name, definition, model_version, domain_type, loc
         definition (str): The model definition.
         model_version (str): The version of the model.
         domain_type (str): domain type such as payment.
+        local_model_weights (str): weights.
+        local_weights_version (int): version of weights.
     """
     sql = """insert into agent_model_records (name, definition, model_version, domain, local_model_weights, local_weights_version) VALUES('{}', '{}', '{}', '{}', '{}', '{}')""".format(
         name, definition, model_version, domain_type, local_model_weights, local_weights_version)
