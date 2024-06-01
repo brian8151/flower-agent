@@ -38,14 +38,22 @@ def compress_weights(weights):
 
 
 def decompress_weights(weights_encoded):
-    if isinstance(weights_encoded, bytes):
-        weights_compressed = weights_encoded
-    else:
-        weights_compressed = base64.b64decode(weights_encoded)
+    logger.debug(f"Decompressing weights. Input type: {type(weights_encoded)}, size: {len(weights_encoded)}")
+    try:
+        if isinstance(weights_encoded, bytes):
+            weights_compressed = weights_encoded
+        else:
+            weights_compressed = base64.b64decode(weights_encoded)
 
-    weights_serialized = gzip.decompress(weights_compressed)
-    weights = pickle.loads(weights_serialized)
-    return weights
+        logger.info(f"Decoded weights. Type: {type(weights_compressed)}, size: {len(weights_compressed)}")
+
+        weights_serialized = gzip.decompress(weights_compressed)
+        weights = pickle.loads(weights_serialized)
+        logger.info("Weights decompressed successfully.")
+        return weights
+    except Exception as e:
+        logger.error(f"Error during decompression: {e}")
+        raise
 
 
 def build_model(domain_type):
