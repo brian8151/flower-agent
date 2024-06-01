@@ -118,6 +118,11 @@ class ModelRunner:
             logger.info("No data found for domain: {0}, batch_id: {1}".format(domain_type, batch_id))
             return []
         logger.info("found model feature records: {0} for batch: {1}".format(len(data), batch_id))
+        # Log the columns retrieved and their count
+        logger.info(f"Columns retrieved: {len(data[0]) if data else 0}")
+        if data:
+            for i, col in enumerate(data[0]):
+                logger.info(f"Column {i}: {col}")
         # Prepare features for prediction
         features = [list(row[1:]) for row in data]
         # Print the shape of the features array
