@@ -38,7 +38,7 @@ def get_model_feature_record(domain, batch_id):
         dynamic_query = f"SELECT {select_clause} FROM {db_table} WHERE batch_id='{batch_id}'"
         logger.info("build dynamic query: {0}".format(len(dynamic_query)))
         # Print the dynamic query for debugging purposes
-        # print(dynamic_query)
+        print(dynamic_query)
         # Execute the dynamic query and fetch the results
         result = DBConnection.execute_query(dynamic_query)
         # Return the results
