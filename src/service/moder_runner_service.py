@@ -1,4 +1,4 @@
-from src.mlmodel.model_builder import load_model_from_json_string, compress_weights, build_model
+from src.mlmodel.model_builder import load_model_from_json_string, compress_weights, build_model, decompress_weights
 from src.repository.model.local_model_history_repository import create_local_model_historical_records
 from src.repository.model.model_data_repositoty import get_model_feature_record
 from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records
@@ -58,6 +58,7 @@ class ModelRunner:
                 local_weights_version = 1
                 model_weights = self.get_model_weights(model_json)
                 # Compress and encode weights
+                logger.info("Compress and encode weights '{0}'.".format(domain))
                 weights_compressed = compress_weights(model_weights)
                 logger.info("saving model track records for domain '{0}'.".format(domain))
                 create_model_track_records(name, model_json, model_version, domain, weights_compressed, local_weights_version)
@@ -102,19 +103,24 @@ class ModelRunner:
         global_model_weights = model_track_record[4]
         if global_model_weights is None:
             logger.info("global_model_weights is empty, use default local model weight")
-            weights = local_model_weights
+            weights_encoded = local_model_weights
         else:
             logger.info("found global_model_weights")
-            weights = global_model_weights
+            weights_encoded = global_model_weights
+        logger.info("Decompress and decode weights '{0}'.".format(domain_type))
+        weights=decompress_weights(weights_encoded)
         model.set_weights(weights)
+        logger.info("get model feature records for batch: {0}".format(batch_id))
         data = get_model_feature_record(domain_type, batch_id)
         # Check if data is retrieved successfully
         if not data:
             logger.info("No data found for domain: {0}, batch_id: {1}".format(domain_type, batch_id))
             return []
+        logger.info("found model feature records: {} for batch: {0}".format(len(data), batch_id))
         # Prepare features for prediction
         features = [list(row[1:]) for row in data]  # Assuming the first column is the id_field
         # Make predictions
+        logger.info("Make predictions")
         y_hat = model.predict(features)
         n = len(features)
         logger.info("Sample size: {0}".format(n))
