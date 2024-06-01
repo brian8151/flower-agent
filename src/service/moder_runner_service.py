@@ -2,6 +2,7 @@ from src.mlmodel.model_builder import load_model_from_json_string, compress_weig
 from src.repository.model.local_model_history_repository import create_local_model_historical_records
 from src.repository.model.model_data_repositoty import get_model_feature_record
 from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records
+import numpy as np
 from src.util import log
 logger = log.init_logger()
 
@@ -118,10 +119,12 @@ class ModelRunner:
             return []
         logger.info("found model feature records: {0} for batch: {1}".format(len(data), batch_id))
         # Prepare features for prediction
-        features = [list(row[1:]) for row in data]  # Assuming the first column is the id_field
+        features = [list(row[1:]) for row in data]
+        # Convert features to a NumPy array and ensure the correct data type
+        features_array = np.array(features, dtype=np.float32)
         # Make predictions
         logger.info("Make predictions")
-        y_hat = model.predict(features)
+        y_hat = model.predict(features_array)
         n = len(features)
         logger.info("Sample size: {0}".format(n))
 
