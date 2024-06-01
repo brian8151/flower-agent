@@ -25,23 +25,24 @@ def get_model_feature_record(domain, batch_id):
     if rows:
         # Extract the table name and id field from the first row
         db_table = rows[0][0]
-        id_field = rows[0][1]
+        # id_field = rows[0][1]
 
         # Extract the feature fields from the remaining rows
         feature_fields = [row[2] for row in rows]
 
         # Construct the SELECT clause by joining the feature fields
-        select_fields = [id_field] + feature_fields
+        select_fields = feature_fields
         select_clause = ", ".join(select_fields)
         logger.info("start to build dynamic query")
         # Construct the dynamic SQL query to retrieve records based on the batch_id
         dynamic_query = f"SELECT {select_clause} FROM {db_table} WHERE batch_id='{batch_id}'"
         logger.info("build dynamic query: {0}".format(len(dynamic_query)))
         # Print the dynamic query for debugging purposes
-        print(dynamic_query)
+        # print(dynamic_query)
         # Execute the dynamic query and fetch the results
         result = DBConnection.execute_query(dynamic_query)
         # Return the results
+        logger.info("get dynamic query result: {0}".format(len(result)))
         return result
     else:
         print("No active features found for the specified domain and model.")

@@ -116,7 +116,7 @@ class ModelRunner:
         if not data:
             logger.info("No data found for domain: {0}, batch_id: {1}".format(domain_type, batch_id))
             return []
-        logger.info("found model feature records: {} for batch: {0}".format(len(data), batch_id))
+        logger.info("found model feature records: {0} for batch: {1}".format(len(data), batch_id))
         # Prepare features for prediction
         features = [list(row[1:]) for row in data]  # Assuming the first column is the id_field
         # Make predictions
