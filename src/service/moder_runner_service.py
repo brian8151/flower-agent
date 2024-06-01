@@ -137,7 +137,7 @@ class ModelRunner:
         logger.info("Sample size: {0}".format(n))
 
         # Prepare the result
-        data_req = [{"id": item_ids[i], "data": features[i], "result": None} for i in range(n)]
+        data_req = [{"itemId": item_ids[i], "result": None} for i in range(n)]
         for i in range(n):
             data_req[i]["result"] = float(100.0 * y_hat[i][0])  # acceptable percentage
 
