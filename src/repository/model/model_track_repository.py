@@ -70,3 +70,24 @@ def create_model_track_records(name, definition, model_version, domain_type, loc
     sql = """insert into agent_model_records (name, definition, model_version, domain, local_model_weights, local_weights_version) VALUES('{}', '{}', '{}', '{}', '{}', '{}')""".format(
         name, definition, model_version, domain_type, local_model_weights, local_weights_version)
     DBConnection.execute_update(sql)
+
+
+def get_model_track_record(domain):
+    """
+    Retrieve the global model track for the given domain from the database.
+
+    Parameters:
+        domain (str): The domain for which to retrieve the global model track.
+
+    Returns:
+        tuple: A tuple containing the model definition, model version, local model weights,
+               local weights version, global model weights, and global weights version.
+               Returns an empty tuple if no record is found.
+    """
+    sql = (
+        """select definition, model_version, local_model_weights, local_weights_version, global_model_weights, global_weights_version from agent_model_records where name='{}'"""
+        .format(domain))
+    result = DBConnection.execute_query(sql)
+    if result:
+        return result[0][0], result[0][1], result[0][2], result[0][3], result[0][4], result[0][5]
+    return ()

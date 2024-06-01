@@ -1,5 +1,6 @@
 from src.mlmodel.model_builder import load_model_from_json_string, compress_weights, build_model
 from src.repository.model.local_model_history_repository import create_local_model_historical_records
+from src.repository.model.model_data_repositoty import get_model_feature_record
 from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records
 from src.util import log
 logger = log.init_logger()
@@ -81,6 +82,51 @@ class ModelRunner:
             logger.error(f"Error getting model weights with compression: {e}")
             raise
 
+    def run_model_predict(self, workflow_trace_id, domain_type, batch_id):
+        """
+          Retrieves model feature records, makes predictions using the given model, and prepares the result.
+
+          Args:
+              domain_type (str): The domain type to filter the records.
+              batch_id (str): The batch_id to filter the records.
+              workflow_trace_id (object): workflow trace id
+
+          Returns:
+              list: A list of dictionaries containing data and prediction results.
+          """
+        logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
+        model = build_model(domain_type)
+        logger.info("Model summary: {0}".format(model.summary()))
+        model_track_record = get_model_track_record(domain_type)
+        local_model_weights = model_track_record[2]
+        global_model_weights = model_track_record[4]
+        if global_model_weights is None:
+            logger.info("global_model_weights is empty, use default local model weight")
+            weights = local_model_weights
+        else:
+            logger.info("found global_model_weights")
+            weights = global_model_weights
+        model.set_weights(weights)
+        data = get_model_feature_record(domain_type, batch_id)
+        # Check if data is retrieved successfully
+        if not data:
+            logger.info("No data found for domain: {0}, batch_id: {1}".format(domain_type, batch_id))
+            return []
+        # Prepare features for prediction
+        features = [list(row[1:]) for row in data]  # Assuming the first column is the id_field
+        # Make predictions
+        y_hat = model.predict(features)
+        n = len(features)
+        logger.info("Sample size: {0}".format(n))
+
+        # Prepare the result
+        data_req = [{"data": features[i], "result": None} for i in range(n)]
+
+        for i in range(n):
+            data_req[i]["result"] = float(100.0 * y_hat[i][0])  # acceptable percentage
+
+        return data_req
+
     def run_model_prediction(self, workflow_trace_id, domain_type, data):
         logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
         model = build_model(domain_type)
@@ -96,6 +142,7 @@ class ModelRunner:
             weights = global_model_weights
 
         model.set_weights(weights)
+
         y_hat = model.predict([item.features for item in data])
         n = len(data)
         logger.info("Data size: {0}".format(n))
