@@ -38,7 +38,11 @@ def compress_weights(weights):
 
 
 def decompress_weights(weights_encoded):
-    weights_compressed = base64.b64decode(weights_encoded.encode('utf-8'))
+    if isinstance(weights_encoded, bytes):
+        weights_compressed = weights_encoded
+    else:
+        weights_compressed = base64.b64decode(weights_encoded.encode('utf-8'))
+
     weights_serialized = gzip.decompress(weights_compressed)
     weights = pickle.loads(weights_serialized)
     return weights
