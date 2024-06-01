@@ -120,6 +120,8 @@ class ModelRunner:
         logger.info("found model feature records: {0} for batch: {1}".format(len(data), batch_id))
         # Prepare features for prediction
         features = [list(row[1:]) for row in data]
+        # Print the shape of the features array
+        logger.info(f"Shape of features array before conversion: {np.array(features).shape}")
         # Convert features to a NumPy array and ensure the correct data type
         features_array = np.array(features, dtype=np.float32)
         # Make predictions
