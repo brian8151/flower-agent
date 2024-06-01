@@ -1,5 +1,7 @@
 from src.repository.db.db_connection import DBConnection
+from src.util import log
 
+logger = log.init_logger()
 
 def get_model_feature_record(domain, batch_id):
     """
@@ -15,15 +17,11 @@ def get_model_feature_record(domain, batch_id):
     """
     # Construct the SQL query to retrieve db_table, id_field, and feature_field based on the domain
     sql = """
-        SELECT db_table, id_field, feature_field 
-        FROM model_data_features 
-        WHERE domain='{0}' AND model='{1}' AND status='Active' 
-        ORDER BY seq_num
-    """.format(domain, domain)
-
+        SELECT db_table, id_field, feature_field FROM model_data_features WHERE domain='{0}' AND model='{1}' AND status='Active'  ORDER BY seq_num""".format(domain, domain)
+    logger.info("get model_data_features sql: {0}".format(sql))
     # Execute the query and fetch the results
     rows = DBConnection.execute_query(sql)
-
+    logger.info("get model_data_features rows: {0}".format(len(rows)))
     if rows:
         # Extract the table name and id field from the first row
         db_table = rows[0][0]
@@ -35,13 +33,12 @@ def get_model_feature_record(domain, batch_id):
         # Construct the SELECT clause by joining the feature fields
         select_fields = [id_field] + feature_fields
         select_clause = ", ".join(select_fields)
-
+        logger.info("start to build dynamic query")
         # Construct the dynamic SQL query to retrieve records based on the batch_id
         dynamic_query = f"SELECT {select_clause} FROM {db_table} WHERE batch_id='{batch_id}'"
-
+        logger.info("build dynamic query: {0}".format(len(dynamic_query)))
         # Print the dynamic query for debugging purposes
         print(dynamic_query)
-
         # Execute the dynamic query and fetch the results
         result = DBConnection.execute_query(dynamic_query)
         # Return the results
