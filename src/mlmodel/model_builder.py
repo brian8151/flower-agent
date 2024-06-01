@@ -31,21 +31,23 @@ def load_model_from_json_string(model_json: str):
 
 
 def compress_weights(weights):
+    logger.info("Compressing weights...")
     weights_serialized = pickle.dumps(weights)
     weights_compressed = gzip.compress(weights_serialized)
     weights_encoded = base64.b64encode(weights_compressed).decode('utf-8')
+    logger.info(f"Weights compressed and encoded: {weights_encoded[:100]}...")  # Log first 100 characters
     return weights_encoded
 
 
 def decompress_weights(weights_encoded):
-    logger.debug(f"Decompressing weights. Input type: {type(weights_encoded)}, size: {len(weights_encoded)}")
+    logger.info(f"Decompressing weights. Input type: {type(weights_encoded)}, size: {len(weights_encoded)}")
     try:
         if isinstance(weights_encoded, bytes):
             weights_compressed = weights_encoded
         else:
             weights_compressed = base64.b64decode(weights_encoded)
 
-        logger.info(f"Decoded weights. Type: {type(weights_compressed)}, size: {len(weights_compressed)}")
+        logger.debug(f"Decoded weights. Type: {type(weights_compressed)}, size: {len(weights_compressed)}")
 
         weights_serialized = gzip.decompress(weights_compressed)
         weights = pickle.loads(weights_serialized)
