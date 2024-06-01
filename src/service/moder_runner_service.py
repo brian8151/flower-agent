@@ -124,7 +124,8 @@ class ModelRunner:
         #     for i, col in enumerate(data[0]):
         #         logger.info(f"Column {i}: {col}")
         # Prepare features for prediction
-        features = [list(row) for row in data]
+        features = [list(row[1:]) for row in data]
+        item_ids = [row[0] for row in data]  # Extract the first column (payment_id)
         # Print the shape of the features array
         logger.info(f"Shape of features array before conversion: {np.array(features).shape}")
         # Convert features to a NumPy array and ensure the correct data type
@@ -136,10 +137,11 @@ class ModelRunner:
         logger.info("Sample size: {0}".format(n))
 
         # Prepare the result
-        data_req = [{"data": features[i], "result": None} for i in range(n)]
-
+        data_req = [{"id": item_ids[i], "data": features[i], "result": None} for i in range(n)]
         for i in range(n):
             data_req[i]["result"] = float(100.0 * y_hat[i][0])  # acceptable percentage
+
+        return data_req
 
         return data_req
 
