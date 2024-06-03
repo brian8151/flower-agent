@@ -1,4 +1,5 @@
 import tensorflow as tf
+from tensorflow.keras.utils import register_keras_serializable
 import io
 import contextlib
 import pickle
@@ -8,8 +9,12 @@ import base64
 from src.repository.model.model_track_repository import get_model_track_record
 from src.util import log
 
+
 logger = log.init_logger()
 
+@register_keras_serializable()
+class Sequential(tf.keras.Sequential):
+    pass
 
 def capture_model_summary(model):
     stream = io.StringIO()
