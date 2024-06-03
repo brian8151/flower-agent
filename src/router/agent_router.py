@@ -31,6 +31,17 @@ async def health():
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 
+@agent_router.post("/get-model-weights")
+async def get_model_weights(request: WeightRequest):
+    try:
+        model_runner = ModelRunner()
+        weights = model_runner.get_model_weights(request.name, request.domain, request.version, request.model)
+        return {"status": "success", "domain": request.domain, "weights": weights}
+    except Exception as e:
+        logger.error(f"Error getting model weights: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
+
+
 @agent_router.post("/predict")
 async def predict_data(request: PredictRequest):
     try:

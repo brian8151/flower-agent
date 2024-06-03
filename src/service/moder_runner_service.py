@@ -5,6 +5,7 @@ from src.repository.model.model_track_repository import get_model_track_record, 
     create_local_model_historical_records
 import numpy as np
 from src.util import log
+
 logger = log.init_logger()
 
 
@@ -24,7 +25,6 @@ class ModelRunner:
             logger.error(f"Error getting model weights: {e}")
             raise
 
-
     def get_model_weights_with_serialize(self, model_json: str):
         try:
             model_weights = self.get_model_weights(model_json)
@@ -34,6 +34,25 @@ class ModelRunner:
             return weights
         except Exception as e:
             logger.error(f"Error getting model weights with serialize: {e}")
+            raise
+
+    def get_model_weights(self, name, domain, model_version, model_json: str):
+        logger.info(f"get_model_weights for domain '{domain}', name: '{name}', model_version: '{model_version}'")
+        try:
+            model_track_record = get_model_track_record(domain)
+            if not model_track_record:
+                logger.info(f"No global model track found for domain '{domain}'. Creating a new entry.")
+                local_weights_version = 1
+                model_weights = self.get_model_weights(model_json)
+                # Compress and encode weights
+                logger.info("Compress and encode weights '{0}'.".format(domain))
+                weights_compressed = compress_weights(model_weights)
+                return weights_compressed
+            else:
+                local_model_weights = model_track_record[2]
+                return local_model_weights
+        except Exception as e:
+            logger.error(f"Error getting model weights with compression: {e}")
             raise
 
     def initial_weights(self, name, domain, model_version, model_json: str):
@@ -63,7 +82,48 @@ class ModelRunner:
                 logger.info("Compress and encode weights '{0}'.".format(domain))
                 weights_compressed = compress_weights(model_weights)
                 logger.info("saving model track records for domain '{0}'.".format(domain))
-                create_model_track_records(name, model_json, model_version, domain, weights_compressed, local_weights_version)
+                create_model_track_records(name, model_json, model_version, domain, weights_compressed,
+                                           local_weights_version)
+                logger.info("model track records for domain '{0}' saved.".format(domain))
+                create_local_model_historical_records("0000000000000000000000000000", name, weights_compressed)
+                logger.info("local model historical records for domain '{0}' saved.".format(domain))
+                return weights_compressed
+            else:
+                local_model_weights = model_track_record[2]
+                return local_model_weights
+        except Exception as e:
+            logger.error(f"Error getting model weights with compression: {e}")
+            raise
+
+    def initial_weights(self, name, domain, model_version, model_json: str):
+        """
+        Initialize weights for the given domain. If no global model track exists for the domain,
+        it creates an entry with the same model and weight.
+
+        Parameters:
+            name (str): The name of model.
+            domain (str): The domain for which to initialize weights.
+            model_version (str): The version of the model.
+            model_json (str): The JSON representation of the model.
+
+        Returns:
+            str: Compressed and encoded model weights.
+
+        Raises:
+            Exception: If there is an error in getting or processing model weights.
+        """
+        try:
+            model_track_record = get_model_track_record(domain)
+            if not model_track_record:
+                logger.info(f"No global model track found for domain '{domain}'. Creating a new entry.")
+                local_weights_version = 1
+                model_weights = self.get_model_weights(model_json)
+                # Compress and encode weights
+                logger.info("Compress and encode weights '{0}'.".format(domain))
+                weights_compressed = compress_weights(model_weights)
+                logger.info("saving model track records for domain '{0}'.".format(domain))
+                create_model_track_records(name, model_json, model_version, domain, weights_compressed,
+                                           local_weights_version)
                 logger.info("model track records for domain '{0}' saved.".format(domain))
                 create_local_model_historical_records("0000000000000000000000000000", name, weights_compressed)
                 logger.info("local model historical records for domain '{0}' saved.".format(domain))
@@ -110,7 +170,7 @@ class ModelRunner:
             logger.info("found global_model_weights")
             weights_encoded = global_model_weights
         logger.info("Decompress and decode weights '{0}'.".format(domain_type))
-        weights=decompress_weights(weights_encoded)
+        weights = decompress_weights(weights_encoded)
         model.set_weights(weights)
         logger.info("get model feature records for batch: {0}".format(batch_id))
         data = get_model_feature_record(domain_type, batch_id)
