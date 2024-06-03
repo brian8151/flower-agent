@@ -1,7 +1,8 @@
 from src.mlmodel.model_builder import load_model_from_json_string, compress_weights, build_model, decompress_weights
-from src.repository.model.local_model_history_repository import create_local_model_historical_records
+from src.repository.db.db_connection import DBConnection
 from src.repository.model.model_data_repositoty import get_model_feature_record
-from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records
+from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records, \
+    create_local_model_historical_records
 import numpy as np
 from src.util import log
 logger = log.init_logger()
@@ -141,7 +142,13 @@ class ModelRunner:
         for i in range(n):
             data_req[i]["result"] = float(100.0 * y_hat[i][0])  # acceptable percentage
 
-        return data_req
+        sql_update_query = "UPDATE model_predict_data SET result = %s WHERE item_id = %s"
+        values = [(item["result"], item["itemId"]) for item in data_req]
+
+        # Execute the batch insert
+        logger.info("Executing batch update for Predict  Data")
+        total_records = DBConnection.execute_batch_insert(sql_update_query, values)
+        logger.info("Total records updated: {0}".format(total_records))
 
         return data_req
 
