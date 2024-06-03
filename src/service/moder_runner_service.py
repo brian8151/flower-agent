@@ -2,7 +2,7 @@ from src.mlmodel.model_builder import load_model_from_json_string, compress_weig
 from src.repository.db.db_connection import DBConnection
 from src.repository.model.model_data_repositoty import get_model_feature_record
 from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records, \
-    create_local_model_historical_records
+    create_local_model_historical_records, update_workflow_model_process
 import numpy as np
 from src.util import log
 
@@ -158,83 +158,61 @@ class ModelRunner:
               list: A list of dictionaries containing data and prediction results.
           """
         logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
-        model = build_model(domain_type)
-        logger.info("Model summary: {0}".format(model.summary()))
-        model_track_record = get_model_track_record(domain_type)
-        local_model_weights = model_track_record[2]
-        global_model_weights = model_track_record[4]
-        if global_model_weights is None:
-            logger.info("global_model_weights is empty, use default local model weight")
-            weights_encoded = local_model_weights
-        else:
-            logger.info("found global_model_weights")
-            weights_encoded = global_model_weights
-        logger.info("Decompress and decode weights '{0}'.".format(domain_type))
-        weights = decompress_weights(weights_encoded)
-        model.set_weights(weights)
-        logger.info("get model feature records for batch: {0}".format(batch_id))
-        data = get_model_feature_record(domain_type, batch_id)
-        # Check if data is retrieved successfully
-        if not data:
-            logger.info("No data found for domain: {0}, batch_id: {1}".format(domain_type, batch_id))
-            return []
-        logger.info("found model feature records: {0} for batch: {1}".format(len(data), batch_id))
-        # Log the columns retrieved and their count
-        logger.info(f"Columns retrieved: {len(data[0]) if data else 0}")
-        # if data:
-        #     for i, col in enumerate(data[0]):
-        #         logger.info(f"Column {i}: {col}")
-        # Prepare features for prediction
-        features = [list(row[1:]) for row in data]
-        item_ids = [row[0] for row in data]  # Extract the first column (payment_id)
-        # Print the shape of the features array
-        logger.info(f"Shape of features array before conversion: {np.array(features).shape}")
-        # Convert features to a NumPy array and ensure the correct data type
-        features_array = np.array(features, dtype=np.float32)
-        # Make predictions
-        logger.info("Make predictions")
-        y_hat = model.predict(features_array)
-        n = len(features)
-        logger.info("Sample size: {0}".format(n))
+        try:
+            model = build_model(domain_type)
+            logger.info("Model summary: {0}".format(model.summary()))
+            model_track_record = get_model_track_record(domain_type)
+            local_model_weights = model_track_record[2]
+            global_model_weights = model_track_record[4]
+            if global_model_weights is None:
+                logger.info("global_model_weights is empty, use default local model weight")
+                weights_encoded = local_model_weights
+            else:
+                logger.info("found global_model_weights")
+                weights_encoded = global_model_weights
+            logger.info("Decompress and decode weights '{0}'.".format(domain_type))
+            weights = decompress_weights(weights_encoded)
+            model.set_weights(weights)
+            logger.info("get model feature records for batch: {0}".format(batch_id))
+            data = get_model_feature_record(domain_type, batch_id)
+            # Check if data is retrieved successfully
+            if not data:
+                logger.info("No data found for domain: {0}, batch_id: {1}".format(domain_type, batch_id))
+                return []
+            logger.info("found model feature records: {0} for batch: {1}".format(len(data), batch_id))
+            # Log the columns retrieved and their count
+            logger.info(f"Columns retrieved: {len(data[0]) if data else 0}")
+            # if data:
+            #     for i, col in enumerate(data[0]):
+            #         logger.info(f"Column {i}: {col}")
+            # Prepare features for prediction
+            features = [list(row[1:]) for row in data]
+            item_ids = [row[0] for row in data]  # Extract the first column (payment_id)
+            # Print the shape of the features array
+            logger.info(f"Shape of features array before conversion: {np.array(features).shape}")
+            # Convert features to a NumPy array and ensure the correct data type
+            features_array = np.array(features, dtype=np.float32)
+            # Make predictions
+            logger.info("Make predictions")
+            y_hat = model.predict(features_array)
+            n = len(features)
+            logger.info("Sample size: {0}".format(n))
 
-        # Prepare the result
-        data_req = [{"itemId": item_ids[i], "result": None} for i in range(n)]
-        for i in range(n):
-            data_req[i]["result"] = float(100.0 * y_hat[i][0])  # acceptable percentage
+            # Prepare the result
+            data_req = [{"itemId": item_ids[i], "result": None} for i in range(n)]
+            for i in range(n):
+                data_req[i]["result"] = float(100.0 * y_hat[i][0])  # acceptable percentage
 
-        sql_update_query = "UPDATE model_predict_data SET result = %s WHERE item_id = %s"
-        values = [(item["result"], item["itemId"]) for item in data_req]
+            sql_update_query = "UPDATE model_predict_data SET result = %s WHERE item_id = %s"
+            values = [(item["result"], item["itemId"]) for item in data_req]
 
-        # Execute the batch insert
-        logger.info("Executing batch update for Predict  Data")
-        total_records = DBConnection.execute_batch_insert(sql_update_query, values)
-        logger.info("Total records updated: {0}".format(total_records))
-
+            # Execute the batch insert
+            logger.info("Executing batch update for Predict  Data")
+            total_records = DBConnection.execute_batch_insert(sql_update_query, values)
+            logger.info("Total records updated: {0}".format(total_records))
+            update_workflow_model_process(workflow_trace_id, 'OFL-20', 'Complete')
+        except Exception as e:
+            logger.error(f"Error run model predict workflow-trace_id: {workflow_trace_id}: {e}")
+            update_workflow_model_process(workflow_trace_id, 'OFL-20', 'Fail')
         return data_req
 
-    def run_model_prediction(self, workflow_trace_id, domain_type, data):
-        logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
-        model = build_model(domain_type)
-        logger.info("Model summary: {0}".format(model.summary()))
-        model_track_record = get_model_track_record(domain_type)
-        local_model_weights = model_track_record[2]
-        global_model_weights = model_track_record[4]
-        if global_model_weights is None:
-            logger.info("global_model_weights is empty, use default local model weight")
-            weights = local_model_weights
-        else:
-            logger.info("found global_model_weights")
-            weights = global_model_weights
-
-        model.set_weights(weights)
-
-        y_hat = model.predict([item.features for item in data])
-        n = len(data)
-        logger.info("Data size: {0}".format(n))
-
-        data_req = [{"data": data[i].features, "result": None} for i in range(n)]
-
-        for i in range(n):
-            data_req[i]["result"] = float(100.0 * y_hat[i][0])  # acceptable percentage
-
-        return data_req

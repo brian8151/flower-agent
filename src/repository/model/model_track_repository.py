@@ -1,6 +1,8 @@
 from src.repository.db.db_connection import DBConnection
 from src.util import log
+
 logger = log.init_logger()
+
 
 def get_model_track_record(domain):
     """
@@ -21,7 +23,6 @@ def get_model_track_record(domain):
     if result:
         return result[0][0], result[0][1], result[0][2], result[0][3], result[0][4], result[0][5]
     return ()
-
 
 
 def update_global_model_track(name, global_model_weights, global_weights_version):
@@ -56,7 +57,8 @@ def update_local_model_track(name, local_model_weights, local_weights_version):
     DBConnection.execute_update(sql)
 
 
-def create_model_track_records(name, definition, model_version, domain_type, local_model_weights, local_weights_version):
+def create_model_track_records(name, definition, model_version, domain_type, local_model_weights,
+                               local_weights_version):
     """
     create data process status to the database.
 
@@ -93,6 +95,7 @@ def get_model_track_record(domain):
         return result[0][0], result[0][1], result[0][2], result[0][3], result[0][4], result[0][5]
     return ()
 
+
 def create_local_model_historical_records(workflow_trace_id, name, model_weights):
     """
     create data process status to the database.
@@ -104,9 +107,26 @@ def create_local_model_historical_records(workflow_trace_id, name, model_weights
     """
     max_version_sql = """SELECT IFNULL(MAX(version), 0) FROM agent_local_model_history WHERE name ='{}'""".format(name)
     result = DBConnection.execute_fetch_one(max_version_sql)
-    max_version = result[0] +1
+    max_version = result[0] + 1
     logger.info("create_local_model_historical_records max_version: {0}".format(max_version))
     sql = """
-    INSERT INTO agent_local_model_history (workflow_trace_id, name, model_weights, version) VALUES ('{}', '{}', '{}','{}')""".format(workflow_trace_id, name, model_weights, max_version)
+    INSERT INTO agent_local_model_history (workflow_trace_id, name, model_weights, version) VALUES ('{}', '{}', '{}','{}')""".format(
+        workflow_trace_id, name, model_weights, max_version)
     DBConnection.execute_update(sql)
-    logger.info("created local model historical records, name: {0}, workflow_trace_id: {1}, max_version: {2}".format(name, workflow_trace_id, max_version))
+    logger.info(
+        "created local model historical records, name: {0}, workflow_trace_id: {1}, max_version: {2}".format(name,
+                                                                                                             workflow_trace_id,
+                                                                                                             max_version))
+
+
+def create_workflow_model_process(workflow_trace_id, event, status):
+    sql = """INSERT INTO workflow_model_logs (workflow_trace_id, event, status)
+             VALUES ('{}', '{}', '{}')""".format(workflow_trace_id, event, status)
+    DBConnection.execute_query(sql)
+
+
+def update_workflow_model_process(workflow_trace_id, event, status):
+    sql = """UPDATE workflow_model_logs 
+             SET status='{}' 
+             WHERE workflow_trace_id='{}' AND event='{}'""".format(status, workflow_trace_id, event)
+    DBConnection.execute_query(sql)
