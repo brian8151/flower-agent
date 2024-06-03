@@ -1,11 +1,13 @@
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-
 from src.router.agent_router import agent_router
 import logging
 import sys
 from os.path import dirname as opd, realpath as opr
+
+from src.util.app_util import print_tensorflow_version
+
 _BASEDIR_ = opd(opr(__file__))
 sys.path.append(_BASEDIR_)
 from dotenv import load_dotenv
@@ -19,6 +21,7 @@ def create_app():
     def on_startup():
         try:
             logging.info("Aikya FL Client started and is listening on http://0.0.0.0:7000")
+            print_tensorflow_version()
         except Exception as e:
             logging.error("Unexpected error: %s", e)
 
