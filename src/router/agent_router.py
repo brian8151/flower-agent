@@ -35,7 +35,7 @@ async def health():
 async def get_model_weights(request: WeightRequest):
     try:
         model_runner = ModelRunner()
-        weights = model_runner.get_model_weights(request.name, request.domain, request.version, request.model)
+        weights = model_runner.get_model_weights_req(request.name, request.domain, request.version, request.model)
         return {"status": "success", "domain": request.domain, "weights": weights}
     except Exception as e:
         logger.error(f"Error getting model weights: {e}")

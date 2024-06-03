@@ -36,7 +36,7 @@ class ModelRunner:
             logger.error(f"Error getting model weights with serialize: {e}")
             raise
 
-    def get_model_weights(self, name, domain, model_version, model_json: str):
+    def get_model_weights_req(self, name, domain, model_version, model_json: str):
         logger.info(f"get_model_weights for domain '{domain}', name: '{name}', model_version: '{model_version}'")
         try:
             model_track_record = get_model_track_record(domain)
