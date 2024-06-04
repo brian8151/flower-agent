@@ -1,4 +1,5 @@
-from src.mlmodel.model_builder import load_model_from_json_string, compress_weights, build_model, decompress_weights
+from src.mlmodel.model_builder import load_model_from_json_string, compress_weights, build_model, decompress_weights, \
+    client_evaluate
 from src.repository.db.db_connection import DBConnection
 from src.repository.model.model_data_repositoty import get_model_feature_record
 from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records, \
@@ -217,4 +218,72 @@ class ModelRunner:
             update_workflow_model_process(workflow_trace_id, 'OFL-20', 'Fail')
             return 'fail', workflow_trace_id, 0
 
+
+    def run_model_training(self, workflow_trace_id, domain_type, batch_id):
+        """
+        Retrieves model feature records, model training using the given model, and prepares the result.
+
+        Args:
+            domain_type (str): The domain type to filter the records.
+            batch_id (str): The batch_id to filter the records.
+            workflow_trace_id (object): workflow trace id
+
+        Returns:
+            list: A list of dictionaries containing data and prediction results.
+        """
+        logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
+        try:
+            model = build_model()
+            logger.info("Model summary: {0}".format(model.summary()))
+            model_track_record = get_model_track_record(domain_type)
+            local_model_weights = model_track_record[2]
+            global_model_weights = model_track_record[4]
+            if global_model_weights is None:
+                logger.info("global_model_weights is empty, use default local model weight")
+                weights_encoded = local_model_weights
+            else:
+                logger.info("found global_model_weights")
+                weights_encoded = global_model_weights
+            logger.info("Decompress and decode weights '{0}'.".format(domain_type))
+            weights = decompress_weights(weights_encoded)
+            model.set_weights(weights)
+            logger.info("get model feature records for batch: {0}".format(batch_id))
+            data = get_model_feature_record(domain_type, batch_id)
+            # Check if data is retrieved successfully
+            if not data:
+                logger.info("No data found for domain: {0}, batch_id: {1}".format(domain_type, batch_id))
+                return []
+            logger.info("found model feature records: {0} for batch: {1}".format(len(data), batch_id))
+            # Log the columns retrieved and their count
+            logger.info(f"Columns retrieved: {len(data[0]) if data else 0}")
+
+            # Prepare features and labels for training and testing
+            features = [list(row[1:]) for row in data]
+            labels = [row[0] for row in data]  # Extract the first column (assumed to be labels)
+
+            # Convert features and labels to NumPy arrays
+            features_array = np.array(features, dtype=np.float32)
+            labels_array = np.array(labels, dtype=np.int32)
+
+            # Split the data into training and testing sets
+            from sklearn.model_selection import train_test_split
+            x_train, x_test, y_train, y_test = train_test_split(features_array, labels_array, test_size=0.2,
+                                                                random_state=42)
+
+            # Train the model
+            logger.info("Training the model")
+            model.fit(x_train, y_train, epochs=10, batch_size=32, verbose=2)
+
+            # Evaluate the model
+            logger.info("Evaluating the model")
+            loss, num_examples, metrics = client_evaluate(model, x_test, y_test)
+            logger.info(f"Loss: {loss}")
+            logger.info(f"Number of Test Examples: {num_examples}")
+            logger.info(f"Metrics: {metrics}")
+            return workflow_trace_id, loss, num_examples, metrics
+
+        except Exception as e:
+            logger.error(f"Error run model predict workflow-trace_id: {workflow_trace_id}: {e}")
+            update_workflow_model_process(workflow_trace_id, 'OFL-20', 'Fail')
+            return 'fail', workflow_trace_id, 0
 

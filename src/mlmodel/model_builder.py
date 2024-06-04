@@ -9,12 +9,13 @@ import base64
 from src.repository.model.model_track_repository import get_model_track_record
 from src.util import log
 
-
 logger = log.init_logger()
+
 
 @register_keras_serializable()
 class Sequential(tf.keras.Sequential):
     pass
+
 
 def capture_model_summary(model):
     stream = io.StringIO()
@@ -73,3 +74,16 @@ def build_model(domain_type):
     logger.info("success loaded model: {0}".format(domain_type))
     # Building the model
     return model
+
+
+def client_evaluate(model, x_test, y_test):
+    logger.info("client_evaluate")
+    loss, accuracy = model.evaluate(x_test, y_test)
+    return loss, len(x_test), {"accuracy": accuracy}
+
+
+def client_evaluate_params(model, parameters, x_test, y_test):
+    logger.info("client_evaluate with weights")
+    model.set_weights(parameters)
+    loss, accuracy = model.evaluate(x_test, y_test)
+    return loss, len(x_test), {"accuracy": accuracy}

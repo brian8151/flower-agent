@@ -2,7 +2,7 @@ from http.client import HTTPException
 
 from fastapi import APIRouter
 
-from src.datamodel.predict_request import PredictRequest
+from src.datamodel.model_request import PredictRequest, TraningRequest
 from src.datamodel.weight_request import WeightRequest
 from src.service.moder_runner_service import ModelRunner
 from src.util import log
@@ -50,6 +50,19 @@ async def predict_data(request: PredictRequest):
         model_runner = ModelRunner()
         status, workflow_trace_id, n  = model_runner.run_model_predict(request.workflow_trace_id, request.domain_type, request.batch_id)
         return {"status": status, "workflow_trace_id": workflow_trace_id, "items": n}
+    except Exception as e:
+        logger.error(f"Error predict data: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
+
+@agent_router.post("/training")
+async def training_data(request: TraningRequest):
+    try:
+        logger.info(f"Domain Type: {request.domain_type}")
+        logger.info(f"Workflow Trace ID: {request.workflow_trace_id}")
+        model_runner = ModelRunner()
+        workflow_trace_id, loss, num_examples, metrics  = model_runner.run_model_training(request.workflow_trace_id, request.domain_type, request.batch_id)
+        return {"workflow_trace_id": workflow_trace_id, "loss": loss, "num_examples": num_examples, "metrics": metrics}
     except Exception as e:
         logger.error(f"Error predict data: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
