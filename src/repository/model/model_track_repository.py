@@ -122,11 +122,11 @@ def create_local_model_historical_records(workflow_trace_id, name, model_weights
 def create_workflow_model_process(workflow_trace_id, event, status):
     sql = """INSERT INTO workflow_model_logs (workflow_trace_id, event, status)
              VALUES ('{}', '{}', '{}')""".format(workflow_trace_id, event, status)
-    DBConnection.execute_query(sql)
+    DBConnection.execute_update(sql)
 
 
 def update_workflow_model_process(workflow_trace_id, event, status):
     sql = """UPDATE workflow_model_logs 
              SET status='{}' 
              WHERE workflow_trace_id='{}' AND event='{}'""".format(status, workflow_trace_id, event)
-    DBConnection.execute_query(sql)
+    DBConnection.execute_update(sql)
