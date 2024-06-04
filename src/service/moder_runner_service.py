@@ -233,7 +233,7 @@ class ModelRunner:
         """
         logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
         try:
-            model = build_model()
+            model = build_model(domain_type)
             logger.info("Model summary: {0}".format(model.summary()))
             model_track_record = get_model_track_record(domain_type)
             local_model_weights = model_track_record[2]
