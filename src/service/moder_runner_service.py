@@ -212,7 +212,7 @@ class ModelRunner:
             # Check if data is retrieved successfully
             if not data:
                 logger.info("No data found for domain: {0}, batch_id: {1}".format(domain_type, batch_id))
-                return []
+                return workflow_trace_id, None, 0, None
             logger.info("found model feature records: {0} for batch: {1}".format(len(data), batch_id))
             # Log the columns retrieved and their count
             logger.info(f"Columns retrieved: {len(data[0]) if data else 0}")
@@ -220,15 +220,32 @@ class ModelRunner:
             # Prepare features and labels for training and testing
             features = [list(row[1:]) for row in data]
             labels = [row[0] for row in data]  # Extract the first column (assumed to be labels)
-
-            # Convert features and labels to NumPy arrays
+            # Convert features to NumPy arrays
             features_array = np.array(features, dtype=np.float32)
-            labels_array = np.array(labels, dtype=np.int32)
+
+            # Generate random labels based on a condition
+            result_list = np.random.rand(len(features)) * 100  # Random values between 0 and 100
+            is_correct_req = np.random.choice(["Y", "N"], len(features))  # Random "Y" or "N"
+
+            y = []
+            for i in range(len(result_list)):
+                if is_correct_req[i] == "Y":
+                    if result_list[i] > 73.0:
+                        y.append(0)
+                    else:
+                        y.append(1)
+                else:
+                    if result_list[i] > 73.0:
+                        y.append(1)
+                    else:
+                        y.append(0)
+            labels_array = np.array(y, dtype=np.int32)
 
             # Split the data into training and testing sets
             from sklearn.model_selection import train_test_split
             x_train, x_test, y_train, y_test = train_test_split(features_array, labels_array, test_size=0.2,
                                                                 random_state=42)
+
             # Compile the model
             model_compile(model)
 
