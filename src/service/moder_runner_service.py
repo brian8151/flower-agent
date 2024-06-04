@@ -219,7 +219,7 @@ class ModelRunner:
             # Prepare features and labels for training and testing
             features = [list(row[1:-3]) for row in
                         data]  # Exclude id_field and the last 3 columns (result, is_correct, score)
-            result_list = [row[-3] for row in data]  # Extract result column
+            result_list = [float(row[-3]) for row in data]  # Extract result column and cast to float
             is_correct_req = [row[-2] for row in data]  # Extract is_correct column
 
             # Convert features to NumPy arrays
