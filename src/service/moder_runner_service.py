@@ -1,5 +1,4 @@
 import numpy as np
-import tensorflow as tf
 from src.mlmodel.model_builder import load_model_from_json_string, compress_weights, build_model, decompress_weights, \
     model_compile
 from src.repository.db.db_connection import DBConnection
