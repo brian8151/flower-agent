@@ -48,8 +48,8 @@ async def predict_data(request: PredictRequest):
         logger.info(f"Domain Type: {request.domain_type}")
         logger.info(f"Workflow Trace ID: {request.workflow_trace_id}")
         model_runner = ModelRunner()
-        data_req = model_runner.run_model_predict(request.workflow_trace_id, request.domain_type, request.batch_id)
-        return {"status": "success", "predictions": data_req}
+        status, workflow_trace_id, n  = model_runner.run_model_predict(request.workflow_trace_id, request.domain_type, request.batch_id)
+        return {"status": status, "workflow_trace_id": workflow_trace_id, "items": n}
     except Exception as e:
         logger.error(f"Error predict data: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")

@@ -211,8 +211,10 @@ class ModelRunner:
             total_records = DBConnection.execute_batch_insert(sql_update_query, values)
             logger.info("Total records updated: {0}".format(total_records))
             update_workflow_model_process(workflow_trace_id, 'OFL-20', 'Complete')
+            return 'success', workflow_trace_id, n
         except Exception as e:
             logger.error(f"Error run model predict workflow-trace_id: {workflow_trace_id}: {e}")
             update_workflow_model_process(workflow_trace_id, 'OFL-20', 'Fail')
-        return data_req
+            return 'fail', workflow_trace_id, 0
+
 
