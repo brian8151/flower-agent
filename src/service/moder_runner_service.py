@@ -190,7 +190,7 @@ class ModelRunner:
         Returns:
             tuple: A tuple containing workflow_trace_id, loss, number of examples, and metrics.
         """
-        logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
+        logger.info("Build model for domain {0}, workflow_trace_id: {1}, batchId: {2}".format(domain_type, workflow_trace_id, batch_id))
         try:
             model = build_model(domain_type)
             logger.info("Model summary: {0}".format(model.summary()))

@@ -102,3 +102,8 @@ def get_model_training_record(domain, batch_id):
 
         # Print the dynamic query for debugging purposes
         print(dynamic_query)
+        # Execute the dynamic query and fetch the results
+        result = DBConnection.execute_query(dynamic_query)
+        # Return the results
+        logger.info("get dynamic query result: {0}".format(len(result)))
+        return result
