@@ -87,3 +87,12 @@ def client_evaluate_params(model, parameters, x_test, y_test):
     model.set_weights(parameters)
     loss, accuracy = model.evaluate(x_test, y_test)
     return loss, len(x_test), {"accuracy": accuracy}
+
+
+def model_compile(model):
+    # Compile the model
+    model.compile(
+        optimizer='adam',
+        loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+        metrics=['accuracy']
+    )
