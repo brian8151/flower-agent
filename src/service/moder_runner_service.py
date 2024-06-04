@@ -228,8 +228,8 @@ class ModelRunner:
             batch_id (str): The batch_id to filter the records.
             workflow_trace_id (object): workflow trace id
 
-        Returns:
-            list: A list of dictionaries containing data and prediction results.
+         Returns:
+                tuple: A tuple containing workflow_trace_id, loss, number of examples, and metrics.
         """
         logger.info("Build model for domain {0}, workflow_trace_id: {1}".format(domain_type, workflow_trace_id))
         try:
@@ -276,14 +276,17 @@ class ModelRunner:
 
             # Evaluate the model
             logger.info("Evaluating the model")
-            loss, num_examples, metrics = client_evaluate(model, x_test, y_test)
+            loss, accuracy = model.evaluate(x_test, y_test)
+            num_examples = len(x_test)
+            metrics = {"accuracy": accuracy}
+
             logger.info(f"Loss: {loss}")
             logger.info(f"Number of Test Examples: {num_examples}")
             logger.info(f"Metrics: {metrics}")
+
             return workflow_trace_id, loss, num_examples, metrics
 
         except Exception as e:
             logger.error(f"Error run model predict workflow-trace_id: {workflow_trace_id}: {e}")
-            update_workflow_model_process(workflow_trace_id, 'OFL-20', 'Fail')
-            return 'fail', workflow_trace_id, 0
+            return workflow_trace_id, None, 0, None
 
