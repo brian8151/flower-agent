@@ -134,6 +134,24 @@ def update_workflow_model_process(workflow_trace_id, event, status):
     DBConnection.execute_update(sql)
 
 
+def create_and_update_model_weight_records(workflow_trace_id, name, model_weights):
+    # Get the current max version for the given name
+    sql_max_version = """SELECT COALESCE(MAX(version), 0) + 1 
+                         FROM agent_local_model_history 
+                         WHERE name='{}'""".format(name)
+    max_version_result = DBConnection.execute_query(sql_max_version)
+    max_version = max_version_result[0][0] if max_version_result else 1
+
+    # Insert the new record with the new version
+    sql_insert = """INSERT INTO agent_local_model_history (workflow_trace_id, name, model_weights, version) 
+                    VALUES ('{}', '{}', '{}', {})""".format(workflow_trace_id, name, model_weights, max_version)
+    DBConnection.execute_update(sql_insert)
+    # Update the agent_model_records with the new version and reset local_model_weights
+    sql_update = """UPDATE agent_model_records 
+                       SET local_weights_version={}, local_model_weights='{}' 
+                       WHERE name='{}'""".format(max_version, model_weights, name)
+    DBConnection.execute_update(sql_update)
+
 def save_mode_training_result(workflow_trace_id, loss, num_examples, metrics):
     """
     Save the model training results into the database.

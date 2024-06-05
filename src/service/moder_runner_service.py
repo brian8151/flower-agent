@@ -5,7 +5,7 @@ from src.repository.db.db_connection import DBConnection
 from src.repository.model.model_data_repositoty import get_model_feature_record, get_model_training_record
 from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records, \
     create_local_model_historical_records, update_workflow_model_process, create_workflow_model_process, \
-    save_mode_training_result
+    save_mode_training_result, create_and_update_model_weight_records
 from src.util import log
 
 logger = log.init_logger()
@@ -261,9 +261,14 @@ class ModelRunner:
             logger.info(f"Loss: {loss}")
             logger.info(f"Number of Test Examples: {num_examples}")
             logger.info(f"Metrics: {metrics}")
+            logger.info(f"create workflow model process - OFL-30: {workflow_trace_id}")
             create_workflow_model_process(workflow_trace_id, 'OFL-30', 'Complete')
             # Save the model training result
+            logger.info(f"save mode training result: {workflow_trace_id}, num_examples: {num_examples}")
             save_mode_training_result(workflow_trace_id, loss, num_examples, metrics)
+            weights_compressed = compress_weights(weights)
+            logger.info(f"save model weight records: {workflow_trace_id}, num_examples: {num_examples}")
+            create_and_update_model_weight_records(workflow_trace_id, domain_type, weights_compressed)
             return 'success', workflow_trace_id, loss, num_examples, metrics
 
         except Exception as e:
