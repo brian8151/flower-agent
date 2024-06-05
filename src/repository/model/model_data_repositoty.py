@@ -96,7 +96,7 @@ def get_model_training_record(domain, batch_id):
         JOIN (
             SELECT mpd.item_id, mpd.result, mf.is_correct, mf.score 
             FROM model_predict_data mpd
-            JOIN model_feedback mf ON mf.model_data_id = mpd.id
+            LEFT JOIN model_feedback mf ON mf.model_data_id = mpd.id
         ) mdata ON data.{id_field} = mdata.item_id
         WHERE data.batch_id = '{batch_id}'
         """
