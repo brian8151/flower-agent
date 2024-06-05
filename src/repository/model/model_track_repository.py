@@ -152,8 +152,10 @@ def save_mode_training_result(workflow_trace_id, loss, num_examples, metrics):
         if connection.is_connected():
             cursor = connection.cursor()
             # Insert metrics
+            loss = round(loss, 10)  # Round the loss value to 10 decimal places
+            accuracy = round(metrics['accuracy'], 10)  # Round the accuracy value to 10 decimal places
             insert_metrics_query = "INSERT INTO metrics (accuracy) VALUES (%s)"
-            cursor.execute(insert_metrics_query, (metrics['accuracy'],))
+            cursor.execute(insert_metrics_query, (accuracy,))
             metrics_id = cursor.lastrowid
             # Insert model training result
             insert_training_result_query = """
