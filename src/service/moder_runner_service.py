@@ -4,7 +4,8 @@ from src.mlmodel.model_builder import load_model_from_json_string, compress_weig
 from src.repository.db.db_connection import DBConnection
 from src.repository.model.model_data_repositoty import get_model_feature_record, get_model_training_record
 from src.repository.model.model_track_repository import get_model_track_record, create_model_track_records, \
-    create_local_model_historical_records, update_workflow_model_process, create_workflow_model_process
+    create_local_model_historical_records, update_workflow_model_process, create_workflow_model_process, \
+    save_mode_training_result
 from src.util import log
 
 logger = log.init_logger()
@@ -261,6 +262,8 @@ class ModelRunner:
             logger.info(f"Number of Test Examples: {num_examples}")
             logger.info(f"Metrics: {metrics}")
             create_workflow_model_process(workflow_trace_id, 'OFL-30', 'Complete')
+            # Save the model training result
+            save_mode_training_result(workflow_trace_id, loss, num_examples, metrics)
             return 'success', workflow_trace_id, loss, num_examples, metrics
 
         except Exception as e:

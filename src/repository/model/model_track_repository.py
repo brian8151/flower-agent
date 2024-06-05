@@ -1,3 +1,5 @@
+import mysql
+
 from src.repository.db.db_connection import DBConnection
 from src.util import log
 
@@ -130,3 +132,41 @@ def update_workflow_model_process(workflow_trace_id, event, status):
              SET status='{}' 
              WHERE workflow_trace_id='{}' AND event='{}'""".format(status, workflow_trace_id, event)
     DBConnection.execute_update(sql)
+
+
+def save_mode_training_result(workflow_trace_id, loss, num_examples, metrics):
+    """
+    Save the model training results into the database.
+
+    Args:
+        workflow_trace_id (str): The workflow trace identifier.
+        loss (float): The loss value from the model evaluation.
+        num_examples (int): The number of examples used in the evaluation.
+        metrics (dict): A dictionary containing the metrics from the model evaluation (e.g., accuracy).
+
+    Returns:
+        None
+    """
+    try:
+        connection = DBConnection.get_connection()
+        if connection.is_connected():
+            cursor = connection.cursor()
+            # Insert metrics
+            insert_metrics_query = "INSERT INTO metrics (accuracy) VALUES (%s)"
+            cursor.execute(insert_metrics_query, (metrics['accuracy'],))
+            metrics_id = cursor.lastrowid
+            # Insert model training result
+            insert_training_result_query = """
+                      INSERT INTO model_training_result (workflow_trace_id, loss, num_examples, metrics_id) 
+                      VALUES (%s, %s, %s, %s)
+                  """
+            cursor.execute(insert_training_result_query, (workflow_trace_id, loss, num_examples, metrics_id))
+            connection.commit()
+            logger.info("Model training result saved successfully")
+    except mysql.connector.Error as e:
+        logger.error(f"Error saving model training result: {e}")
+    finally:
+        if connection.is_connected():
+            cursor.close()
+            logger.info("MySQL cursor is closed")
+
