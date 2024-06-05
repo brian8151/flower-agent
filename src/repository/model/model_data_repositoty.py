@@ -3,6 +3,7 @@ from src.util import log
 
 logger = log.init_logger()
 
+
 def get_model_feature_record(domain, batch_id):
     """
     Constructs and executes a dynamic SQL query to retrieve records from the model_data_features table
@@ -17,7 +18,8 @@ def get_model_feature_record(domain, batch_id):
     """
     # Construct the SQL query to retrieve db_table, id_field, and feature_field based on the domain
     sql = """
-        SELECT db_table, id_field, feature_field FROM model_data_features WHERE domain='{0}' AND model='{1}' AND status='Active'  ORDER BY seq_num""".format(domain, domain)
+        SELECT db_table, id_field, feature_field FROM model_data_features WHERE domain='{0}' AND model='{1}' AND status='Active'  ORDER BY seq_num""".format(
+        domain, domain)
     logger.info("get model_data_features sql: {0}".format(sql))
     # Execute the query and fetch the results
     rows = DBConnection.execute_query(sql)
