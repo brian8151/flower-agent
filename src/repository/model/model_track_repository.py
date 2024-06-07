@@ -19,7 +19,7 @@ def get_model_track_record(domain):
                Returns an empty tuple if no record is found.
     """
     sql = (
-        """select definition, model_version, local_model_weights, local_weights_version, global_model_weights, global_weights_version from agent_model_records where name='{}'"""
+        """select definition, model_version, local_model_weights, local_weights_version, global_model_weights, global_weights_version from model_client_records where name='{}'"""
         .format(domain))
     result = DBConnection.execute_query(sql)
     if result:
@@ -37,7 +37,7 @@ def update_global_model_track(name, global_model_weights, global_weights_version
         global_weights_version (str): The global model weights version
     """
 
-    sql = """UPDATE agent_model_records SET global_model_weights='{}' and global_weights_version='{}' WHERE name='{}'""".format(
+    sql = """UPDATE model_client_records SET global_model_weights='{}' and global_weights_version='{}' WHERE name='{}'""".format(
         global_model_weights, global_weights_version, name)
     print(f"SQL Query: {sql}")
     DBConnection.execute_update(sql)
@@ -53,7 +53,7 @@ def update_local_model_track(name, local_model_weights, local_weights_version):
         local_weights_version (str): The local model weights version
     """
 
-    sql = """UPDATE agent_model_records SET local_model_weights='{}' and local_weights_version='{}' WHERE name='{}'""".format(
+    sql = """UPDATE model_client_records SET local_model_weights='{}' and local_weights_version='{}' WHERE name='{}'""".format(
         local_model_weights, local_weights_version, name)
     print(f"SQL Query: {sql}")
     DBConnection.execute_update(sql)
@@ -72,7 +72,7 @@ def create_model_track_records(name, definition, model_version, domain_type, loc
         local_model_weights (str): weights.
         local_weights_version (int): version of weights.
     """
-    sql = """insert into agent_model_records (name, definition, model_version, domain, local_model_weights, local_weights_version) VALUES('{}', '{}', '{}', '{}', '{}', '{}')""".format(
+    sql = """insert into model_client_records (name, definition, model_version, domain, local_model_weights, local_weights_version) VALUES('{}', '{}', '{}', '{}', '{}', '{}')""".format(
         name, definition, model_version, domain_type, local_model_weights, local_weights_version)
     DBConnection.execute_update(sql)
 
@@ -90,7 +90,7 @@ def get_model_track_record(domain):
                Returns an empty tuple if no record is found.
     """
     sql = (
-        """select definition, model_version, local_model_weights, local_weights_version, global_model_weights, global_weights_version from agent_model_records where name='{}'"""
+        """select definition, model_version, local_model_weights, local_weights_version, global_model_weights, global_weights_version from model_client_records where name='{}'"""
         .format(domain))
     result = DBConnection.execute_query(sql)
     if result:
@@ -107,12 +107,12 @@ def create_local_model_historical_records(workflow_trace_id, name, model_weights
         workflow_trace_id (str): workflow trace id.
         model_weights (str): local model weights.
     """
-    max_version_sql = """SELECT IFNULL(MAX(version), 0) FROM agent_local_model_history WHERE name ='{}'""".format(name)
+    max_version_sql = """SELECT IFNULL(MAX(version), 0) FROM model_client_record_history WHERE name ='{}'""".format(name)
     result = DBConnection.execute_fetch_one(max_version_sql)
     max_version = result[0] + 1
     logger.info("create_local_model_historical_records max_version: {0}".format(max_version))
     sql = """
-    INSERT INTO agent_local_model_history (workflow_trace_id, name, model_weights, version) VALUES ('{}', '{}', '{}','{}')""".format(
+    INSERT INTO model_client_record_history (workflow_trace_id, name, model_weights, version) VALUES ('{}', '{}', '{}','{}')""".format(
         workflow_trace_id, name, model_weights, max_version)
     DBConnection.execute_update(sql)
     logger.info(
@@ -137,17 +137,17 @@ def update_workflow_model_process(workflow_trace_id, event, status):
 def create_and_update_model_weight_records(workflow_trace_id, name, model_weights):
     # Get the current max version for the given name
     sql_max_version = """SELECT COALESCE(MAX(version), 0) + 1 
-                         FROM agent_local_model_history 
+                         FROM model_client_record_history 
                          WHERE name='{}'""".format(name)
     max_version_result = DBConnection.execute_query(sql_max_version)
     max_version = max_version_result[0][0] if max_version_result else 1
 
     # Insert the new record with the new version
-    sql_insert = """INSERT INTO agent_local_model_history (workflow_trace_id, name, model_weights, version) 
+    sql_insert = """INSERT INTO model_client_record_history (workflow_trace_id, name, model_weights, version) 
                     VALUES ('{}', '{}', '{}', {})""".format(workflow_trace_id, name, model_weights, max_version)
     DBConnection.execute_update(sql_insert)
-    # Update the agent_model_records with the new version and reset local_model_weights
-    sql_update = """UPDATE agent_model_records 
+    # Update the model_client_records with the new version and reset local_model_weights
+    sql_update = """UPDATE model_client_records 
                        SET local_weights_version={}, local_model_weights='{}' 
                        WHERE name='{}'""".format(max_version, model_weights, name)
     DBConnection.execute_update(sql_update)
