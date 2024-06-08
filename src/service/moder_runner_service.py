@@ -172,11 +172,11 @@ class ModelRunner:
             logger.info("Executing batch update for Predict  Data")
             total_records = DBConnection.execute_batch_insert(sql_update_query, values)
             logger.info("Total records updated: {0}".format(total_records))
-            update_workflow_model_process(workflow_trace_id, 'OFL-20', 'Complete')
+            update_workflow_model_process(workflow_trace_id, 'OFL-C2', 'Complete')
             return 'success', workflow_trace_id, n
         except Exception as e:
             logger.error(f"Error run model predict workflow-trace_id: {workflow_trace_id}: {e}")
-            update_workflow_model_process(workflow_trace_id, 'OFL-20', 'Fail')
+            update_workflow_model_process(workflow_trace_id, 'OFL-C2', 'Fail')
             return 'fail', workflow_trace_id, 0
 
     def run_model_training(self, workflow_trace_id, domain_type, batch_id):
@@ -261,8 +261,8 @@ class ModelRunner:
             logger.info(f"Loss: {loss}")
             logger.info(f"Number of Test Examples: {num_examples}")
             logger.info(f"Metrics: {metrics}")
-            logger.info(f"create workflow model process - OFL-30: {workflow_trace_id}")
-            create_workflow_model_process(workflow_trace_id, 'OFL-30', 'Complete')
+            logger.info(f"create workflow model process - OFL-C4: {workflow_trace_id}")
+            create_workflow_model_process(workflow_trace_id, 'OFL-C4', 'Complete')
             # Save the model training result
             logger.info(f"save mode training result: {workflow_trace_id}, num_examples: {num_examples}")
             save_mode_training_result(workflow_trace_id, loss, num_examples, metrics)
@@ -273,6 +273,6 @@ class ModelRunner:
 
         except Exception as e:
             logger.error(f"Error run model predict workflow-trace_id: {workflow_trace_id}: {e}")
-            create_workflow_model_process(workflow_trace_id, 'OFL-30', 'Fail')
+            create_workflow_model_process(workflow_trace_id, 'OFL-C4', 'Fail')
             return 'fail', workflow_trace_id, None, 0, None
 
