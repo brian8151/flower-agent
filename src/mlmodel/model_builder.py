@@ -4,9 +4,8 @@ import contextlib
 import pickle
 import gzip
 import base64
-from keras.models import model_from_json, Sequential
-from keras.layers import InputLayer, Dense
-from keras.utils.generic_utils import get_custom_objects
+from tensorflow.keras.models import model_from_json, Sequential
+from tensorflow.keras.layers import InputLayer, Dense
 
 from src.repository.model.model_track_repository import get_model_track_record
 from src.util import log
