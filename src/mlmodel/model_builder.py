@@ -1,34 +1,35 @@
 import tensorflow as tf
+from tensorflow.keras.utils import register_keras_serializable
 import io
 import contextlib
 import pickle
 import gzip
 import base64
-from tensorflow.keras.models import model_from_json, Sequential
-from tensorflow.keras.layers import InputLayer, Dense
 
 from src.repository.model.model_track_repository import get_model_track_record
 from src.util import log
 
 logger = log.init_logger()
 
-custom_objects = {
-    'Sequential': Sequential,
-    'InputLayer': InputLayer,
-    'Dense': Dense,
-    # Add other custom objects if needed
-}
+
+@register_keras_serializable()
+class Sequential(tf.keras.Sequential):
+    pass
 
 
 def capture_model_summary(model):
-    summary_list = []
-    model.summary(print_fn=lambda x: summary_list.append(x))
-    return "\n".join(summary_list)
+    stream = io.StringIO()
+    with contextlib.redirect_stdout(stream):
+        model.summary()
+    summary_str = stream.getvalue()
+    return summary_str
 
 
 def load_model_from_json_string(model_json: str):
     try:
-        model = model_from_json(model_json, custom_objects=custom_objects)
+        custom_objects = {'Sequential': Sequential}
+        model = tf.keras.models.model_from_json(model_json, custom_objects=custom_objects)
+        # model = tf.keras.models.model_from_json(model_json)
         model_summary = capture_model_summary(model)
         logger.info("Model architecture loaded successfully.\nModel Summary:\n{0}".format(model_summary))
         return model
