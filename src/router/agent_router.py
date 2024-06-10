@@ -25,7 +25,6 @@ async def check_health():
 async def initial_weights(request: WeightRequest):
     try:
         model_runner = ModelRunner()
-        logger.info(f"Model JSON: {request.model}")
         weights = model_runner.initial_weights(request.name, request.domain, request.version, request.model)
         return {"status": "success", "domain": request.domain, "weights": weights}
     except Exception as e:
