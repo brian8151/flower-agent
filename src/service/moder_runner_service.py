@@ -45,6 +45,7 @@ class ModelRunner:
             if not model_track_record:
                 logger.info(f"No global model track found for domain '{domain}'. Creating a new entry.")
                 local_weights_version = 1
+                logger.info(f"Model JSON: {model_json}")
                 model_weights = self.get_model_weights(model_json)
                 # Compress and encode weights
                 logger.info("Compress and encode weights '{0}'.".format(domain))
