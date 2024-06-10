@@ -5,16 +5,40 @@ import contextlib
 import pickle
 import gzip
 import base64
-
+from keras.models import Sequential
 from src.repository.model.model_track_repository import get_model_track_record
 from src.util import log
 
 logger = log.init_logger()
 
 
-@register_keras_serializable()
-class Sequential(tf.keras.Sequential):
-    pass
+class CustomDense(tf.keras.layers.Layer):
+    def __init__(self, units, **kwargs):
+        super(CustomDense, self).__init__(**kwargs)
+        self.units = units
+
+    def build(self, input_shape):
+        self.kernel = self.add_weight(name='kernel',
+                                      shape=(input_shape[-1], self.units),
+                                      initializer='uniform',
+                                      trainable=True)
+
+    def call(self, inputs):
+        return tf.matmul(inputs, self.kernel)
+
+
+# Register the custom objects
+custom_objects = {
+    'CustomDense': CustomDense,
+    'Sequential': Sequential,
+    # Add other custom objects here
+}
+
+
+def capture_model_summary(model):
+    summary_list = []
+    model.summary(print_fn=lambda x: summary_list.append(x))
+    return "\n".join(summary_list)
 
 
 def capture_model_summary(model):
@@ -27,16 +51,13 @@ def capture_model_summary(model):
 
 def load_model_from_json_string(model_json: str):
     try:
-        custom_objects = {'Sequential': Sequential}
         model = tf.keras.models.model_from_json(model_json, custom_objects=custom_objects)
-        # model = tf.keras.models.model_from_json(model_json)
         model_summary = capture_model_summary(model)
         logger.info("Model architecture loaded successfully.\nModel Summary:\n{0}".format(model_summary))
         return model
     except Exception as e:
         logger.error(f"Error loading model from JSON: {e}")
         raise
-
 
 def compress_weights(weights):
     logger.info("Compressing weights...")
