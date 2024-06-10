@@ -18,11 +18,15 @@ class Sequential(tf.keras.Sequential):
 
 
 def capture_model_summary(model):
-    stream = io.StringIO()
-    with contextlib.redirect_stdout(stream):
-        model.summary()
-    summary_str = stream.getvalue()
-    return summary_str
+    # This function captures the model summary
+    try:
+        summary_list = []
+        model.summary(print_fn=lambda x: summary_list.append(x))
+        return "\n".join(summary_list)
+    except Exception as e:
+        logger.error(f"Error capturing model summary: {e}")
+        return "Error capturing model summary."
+
 
 
 def load_model_from_json_string(model_json: str):
