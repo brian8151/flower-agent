@@ -39,4 +39,5 @@ def generate_model_json(domain=None):
         model_json = model.to_json()
         return model_json
     except InvalidDomainError as e:
-        print(e)
+        logger.error(f"Error generating model JSON: {e}")
+        raise

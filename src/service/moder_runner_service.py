@@ -20,15 +20,17 @@ class ModelRunner:
 
     def get_model_weights(self, model_json: str):
         try:
+            if not model_json:
+                raise ValueError("Model JSON is empty")
             model = load_model_from_json_string(model_json)
             weights = model.get_weights()
-            # logger.info("get model weight: {0}".format(weights))
+            logger.info("Model weights retrieved successfully.")
             return weights
         except Exception as e:
             logger.error(f"Error getting model weights: {e}")
             raise
 
-    def get_model_weights(self, domain):
+    def get_domain_model_weights(self, domain):
         try:
             model = build_model(domain)
             weights = model.get_weights()
