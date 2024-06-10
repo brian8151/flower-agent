@@ -31,8 +31,9 @@ def capture_model_summary(model):
 
 def load_model_from_json_string(model_json: str):
     try:
-        custom_objects = {'Sequential': Sequential}
-        model = tf.keras.models.model_from_json(model_json, custom_objects=custom_objects)
+        # custom_objects = {'Sequential': Sequential}
+        # model = tf.keras.models.model_from_json(model_json, custom_objects=custom_objects)
+        model = tf.keras.models.model_from_json(model_json)
         # model = tf.keras.models.model_from_json(model_json)
         model_summary = capture_model_summary(model)
         logger.info("Model architecture loaded successfully.\nModel Summary:\n{0}".format(model_summary))

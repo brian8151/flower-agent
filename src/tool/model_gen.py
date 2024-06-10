@@ -8,7 +8,7 @@ class InvalidDomainError(Exception):
     pass
 
 
-def build_model(domain=None):
+def compile_build_model(domain=None):
     logger.info("Build for domain {} model".format(domain))
     model = None
     if domain == "payment":
@@ -34,7 +34,7 @@ def build_model(domain=None):
 
 def generate_model_json(domain=None):
     try:
-        model = build_model(domain)
+        model = compile_build_model(domain)
         # Convert the model to JSON
         model_json = model.to_json()
         return model_json
