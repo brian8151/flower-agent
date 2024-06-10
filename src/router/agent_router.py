@@ -3,7 +3,7 @@ from http.client import HTTPException
 from fastapi import APIRouter
 
 from src.datamodel.model_request import PredictRequest, TraningRequest
-from src.datamodel.weight_request import WeightRequest
+from src.datamodel.weight_request import WeightRequest, WeightModelRequest
 from src.service.moder_runner_service import ModelRunner
 from src.util import log
 
@@ -32,17 +32,8 @@ async def initial_weights(request: WeightRequest):
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
 
 
-@agent_router.get("/health")
-async def health():
-    try:
-        return {"status": "success"}
-    except Exception as e:
-        logger.error(f"Error getting health: {e}")
-        raise HTTPException(status_code=500, detail=f"Internal Server Error: {e}")
-
-
 @agent_router.post("/get-model-weights")
-async def get_model_weights(request: WeightRequest):
+async def get_model_weights(request: WeightModelRequest):
     try:
         model_runner = ModelRunner()
         weights = model_runner.get_model_weights_req(request.name, request.domain, request.version, request.model)

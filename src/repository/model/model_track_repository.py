@@ -94,9 +94,10 @@ def get_model_track_record(domain):
         .format(domain))
     result = DBConnection.execute_query(sql)
     if result:
-        return result[0][0], result[0][1], result[0][2], result[0][3], result[0][4], result[0][5]
+        record = result[0]
+        local_model_weights_present = record[2] is not None and record[2] != ''
+        return record[0], record[1], record[2], record[3], record[4], record[5], local_model_weights_present
     return ()
-
 
 def create_local_model_historical_records(workflow_trace_id, name, model_weights):
     """

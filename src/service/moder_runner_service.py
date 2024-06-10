@@ -83,22 +83,23 @@ class ModelRunner:
         """
         try:
             model_track_record = get_model_track_record(domain)
-            if not model_track_record:
-                logger.info(f"No global model track found for domain '{domain}'. Creating a new entry.")
-                local_weights_version = 1
-                model_weights = self.get_model_weights(domain)
-                # Compress and encode weights
-                logger.info("Compress and encode weights '{0}'.".format(domain))
-                weights_compressed = compress_weights(model_weights)
-                logger.info("saving model track records for domain '{0}'.".format(domain))
-                update_local_model_track(name,weights_compressed, local_weights_version)
-                logger.info("model track records for domain '{0}' saved.".format(domain))
-                create_local_model_historical_records("0000000000000000000000000000", name, weights_compressed)
-                logger.info("local model historical records for domain '{0}' saved.".format(domain))
-                return weights_compressed
-            else:
-                local_model_weights = model_track_record[2]
-                return local_model_weights
+            if model_track_record:
+                definition, model_version, local_model_weights, local_weights_version, global_model_weights, global_weights_version, local_model_weights_present = model_track_record
+                if not local_model_weights_present:
+                    logger.info(f"Local model weights are empty or do not exist. '{domain}'. Update Local model weights.")
+                    local_weights_version = 1
+                    model_weights = self.get_model_weights(domain)
+                    # Compress and encode weights
+                    logger.info("Compress and encode weights '{0}'.".format(domain))
+                    weights_compressed = compress_weights(model_weights)
+                    logger.info("saving model track records for domain '{0}'.".format(domain))
+                    update_local_model_track(name, weights_compressed, local_weights_version)
+                    logger.info("model track records for domain '{0}' saved.".format(domain))
+                    create_local_model_historical_records("0000000000000000000000000000", name, weights_compressed)
+                    logger.info("local model historical records for domain '{0}' saved.".format(domain))
+                    return weights_compressed
+                else:
+                    return local_model_weights
         except Exception as e:
             logger.error(f"Error getting model weights with compression: {e}")
             raise
